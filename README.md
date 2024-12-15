@@ -5,12 +5,11 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 详细使用请参考[NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
 
 效果图：
-> 后续版本将更名至NeatChat
 
 原版：
 ![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135339.png)
 新版：
-![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135459.png)
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20191534.png)
 原版：
 ![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135556.png)
 新版：
@@ -18,10 +17,10 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 原版：
 ![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135643.png)
 新版：
-![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20141335.png)
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20191722.png)
 
 *此分支将尽量同步官方更新，此分支为精简分支，克制改动，只为精简*
-1. [演示站](https://next.tz889.us.kg)
+1. [演示站](https://neat.tz889.us.kg)
 2. docker只需要替换官方**yidadaa/chatgpt-next-web:版本号**为**tianzhentech/chatgpt-next-web:latest**即可
 
 ## Star History
