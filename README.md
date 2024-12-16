@@ -19,7 +19,7 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
   </tr>
   <tr>
     <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135556.png" style="width: 100%; height: auto;"/></td>
-    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20141817.png" style="width: 100%; height: auto;"/></td>
+    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B978B620E-77AF-44CB-A871-2DFC075E56FD%7D.png" style="width: 100%; height: auto;"/></td>
   </tr>
   <tr>
     <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135643.png" style="width: 100%; height: auto;"/></td>
