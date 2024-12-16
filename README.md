@@ -8,16 +8,6 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 
 ## 新旧对比
 
-# NeatChat
-NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告。
-更改了配色，去除了多语言支持，只保留中文和英文，只为精简。
-
-详细使用请参考[NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
-
-> [演示站](https://neat.tz889.us.kg)
-
-## 新旧对比
-
 <table style="border-collapse: collapse; border: 0.2px solid #ddd; width: 100%;">
   <tr>
     <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">原版</th>
