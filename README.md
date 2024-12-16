@@ -1,6 +1,6 @@
 # NeatChat
 NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告。
-并更改了配色，去除了多语言支持，只保留中文和英文，只为精简。
+更改了配色，去除了多语言支持，只保留中文和英文，只为精简。
 
 详细使用请参考[NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
 
@@ -23,6 +23,7 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 1. [演示站](https://neat.tz889.us.kg)
 2. docker只需要替换官方**yidadaa/chatgpt-next-web:版本号**为**tianzhentech/chatgpt-next-web:latest**即可
 
+## 如果喜欢，给我一个免费的star吧，这将是我持续更新的动力，谢谢！
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date)](https://star-history.com/#tianzhentech/ChatGPT-Next-Web&Date)
