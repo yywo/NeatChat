@@ -55,35 +55,35 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2</td>
     <td style="padding: 8px; border: 1px solid #ddd;">全平台打包（Windows、Mac、Linux、Android、iOS）</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">次级</td>
-    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">1天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">进行中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">3</td>
     <td style="padding: 8px; border: 1px solid #ddd;">开启preview分支，提前体验新功能，preview分支会定期合并到main分支</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">次级</td>
-    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">1天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">即将开启</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">4</td>
     <td style="padding: 8px; border: 1px solid #ddd;">增加多彩主题（支持启动时或者启动后切换基本色）</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">积极</td>
-    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">即将开启</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">5</td>
     <td style="padding: 8px; border: 1px solid #ddd;">增加Neat模式（改善在移动设备上的使用体验）</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">次级</td>
-    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">6</td>
     <td style="padding: 8px; border: 1px solid #ddd;">开启mini分支，去除面具，实时语音等不常用功能</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">次级</td>
-    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
   </tr>
   <tr>
