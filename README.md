@@ -36,12 +36,12 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 > 详细使用请参考[NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
 ## 开发计划
 
-<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+<table style="width: 100%; border-collapse: collapse; margin-bottom: 20px; table-layout: fixed;">
   <tr>
-    <th width="6%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">序号</th>
-    <th width="64%" style="text-align: left; padding: 8px; border: 1px solid #ddd;">详情</th>
-    <th width="18%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">预计时间</th>
-    <th width="12%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">状态</th>
+    <th style="text-align: center; padding: 8px; border: 1px solid #ddd; width: 60px; min-width: 60px; white-space: nowrap;">序号</th>
+    <th style="text-align: left; padding: 8px; border: 1px solid #ddd;">详情</th>
+    <th style="text-align: center; padding: 8px; border: 1px solid #ddd; width: 100px; min-width: 100px; white-space: nowrap;">预计时间</th>
+    <th style="text-align: center; padding: 8px; border: 1px solid #ddd; width: 80px; min-width: 80px; white-space: nowrap;">状态</th>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">1</td>
