@@ -38,9 +38,9 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
   <tr>
-    <th width="10%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">序号</th>
-    <th width="70%" style="text-align: left; padding: 8px; border: 1px solid #ddd;">详情</th>
-    <th width="20%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">状态</th>
+    <th width="8%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">序号</th>
+    <th width="77%" style="text-align: left; padding: 8px; border: 1px solid #ddd;">详情</th>
+    <th width="15%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">状态</th>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">1</td>
