@@ -38,58 +38,69 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 
 <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
   <tr>
-    <th width="8%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">序号</th>
-    <th width="77%" style="text-align: left; padding: 8px; border: 1px solid #ddd;">详情</th>
-    <th width="15%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">状态</th>
+    <th width="6%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">序号</th>
+    <th width="64%" style="text-align: left; padding: 8px; border: 1px solid #ddd;">详情</th>
+    <th width="18%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">预计时间</th>
+    <th width="12%" style="text-align: center; padding: 8px; border: 1px solid #ddd;">状态</th>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">1</td>
     <td style="padding: 8px; border: 1px solid #ddd;">去除广告，精简语言包，调整UI，适配更多视觉模型</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">已完成</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2</td>
     <td style="padding: 8px; border: 1px solid #ddd;">全平台打包（Windows、Mac、Linux、Android、iOS）</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">进行中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">3</td>
     <td style="padding: 8px; border: 1px solid #ddd;">开启preview分支，提前体验新功能，preview分支会定期合并到main分支</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">即将开启</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">4</td>
     <td style="padding: 8px; border: 1px solid #ddd;">增加多彩主题（支持启动时或者启动后切换基本色）</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">即将开启</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">5</td>
     <td style="padding: 8px; border: 1px solid #ddd;">增加Neat模式（改善在移动设备上的使用体验）</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">6</td>
     <td style="padding: 8px; border: 1px solid #ddd;">开启mini分支，去除面具，实时语音等不常用功能</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">7</td>
     <td style="padding: 8px; border: 1px solid #ddd;">改进聊天记录同步功能</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">8</td>
     <td style="padding: 8px; border: 1px solid #ddd;">优化本地消息过多导致的流式变慢问题</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">9</td>
     <td style="padding: 8px; border: 1px solid #ddd;">增加上传文件功能，改进由于发送文本过长导致的输入框卡顿问题</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">......</td>
     <td style="padding: 8px; border: 1px solid #ddd;">各位朋友们的建议</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">......</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">......</td>
   </tr>
 </table>
