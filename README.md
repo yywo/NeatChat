@@ -36,11 +36,11 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 > 详细使用请参考[NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
 ## 开发计划
 
-<table style="border-collapse: collapse; border: 0.2px solid #ddd; width: 100%;">
+<table style="border-collapse: collapse; border: 0.2px solid #ddd; width: 100%; table-layout: fixed;">
   <tr>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">序号</th>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">详情</th>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">状态</th>
+    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center; width: 10%;">序号</th>
+    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center; width: 70%;">详情</th>
+    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center; width: 20%;">状态</th>
   </tr>
   <tr>
     <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">1</td>
@@ -96,4 +96,8 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date)](https://star-history.com/#tianzhentech/ChatGPT-Next-Web&Date)
+<div style="width: 100%;">
+  <a href="https://star-history.com/#tianzhentech/ChatGPT-Next-Web&Date">
+    <img src="https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date" style="width: 100%; height: auto;">
+  </a>
+</div>
