@@ -36,63 +36,18 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 > 详细使用请参考[NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
 ## 开发计划
 
-<table style="border-collapse: collapse; border: 0.2px solid #ddd; width: 100%; table-layout: fixed;">
-  <tr>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center; width: 10%;">序号</th>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center; width: 70%;">详情</th>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center; width: 20%;">状态</th>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">1</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">去除广告，精简语言包，调整UI，适配更多视觉模型</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">已完成</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">2</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">全平台打包（Windows、Mac、Linux、Android、iOS）</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">进行中</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">3</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">开启preview分支，提前体验新功能，preview分支会定期合并到main分支</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">即将开启</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">4</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">增加多彩主题（支持启动时或者启动后切换基本色）</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">即将开启</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">5</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">增加Neat模式（改善在移动设备上的使用体验）</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">计划中</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">6</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">开启mini分支，去除面具，实时语音等不常用功能</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">计划中</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">7</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">改进聊天记录同步功能</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">计划中</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">8</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">优化本地消息过多导致的流式变慢问题</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">计划中</td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">9</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">增加上传文件功能，改进由于发送文本过长导致的输入框卡顿问题</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">计划中</td>
-  </tr>
-    <tr>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">......</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px;">各位朋友们的建议</td>
-    <td style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">......</td>
-  </tr>
-</table>
+| 序号 | 详情 | 状态 |
+|:---:|:---|:---:|
+| 1 | 去除广告，精简语言包，调整UI，适配更多视觉模型 | 已完成 |
+| 2 | 全平台打包（Windows、Mac、Linux、Android、iOS） | 进行中 |
+| 3 | 开启preview分支，提前体验新功能，preview分支会定期合并到main分支 | 即将开启 |
+| 4 | 增加多彩主题（支持启动时或者启动后切换基本色） | 即将开启 |
+| 5 | 增加Neat模式（改善在移动设备上的使用体验） | 计划中 |
+| 6 | 开启mini分支，去除面具，实时语音等不常用功能 | 计划中 |
+| 7 | 改进聊天记录同步功能 | 计划中 |
+| 8 | 优化本地消息过多导致的流式变慢问题 | 计划中 |
+| 9 | 增加上传文件功能，改进由于发送文本过长导致的输入框卡顿问题 | 计划中 |
+| ...... | 各位朋友们的建议 | ...... |
 
 ## Star History
 
