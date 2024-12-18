@@ -116,6 +116,17 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
   </tr>
 </table>
 
+## 多彩基本色预览
+
+### 硅基紫
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B37E636D3-3979-4EEA-AA0A-E0BBFC0F9011%7D.png)
+### 金色
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B1480B42B-F15C-4E1A-BA4F-293E01AEE82E%7D.png)
+### 粉色
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B5AB5B0F2-C040-461D-98C9-0762DC330EE5%7D.png)
+
+> 等等，包括favicon都将保持与基本色一致
+
 ## Star History
 
 <div style="width: 100%;">
