@@ -252,8 +252,7 @@ export function getMessageImages(message: RequestMessage): string[] {
 }
 
 export function isVisionModel(model: string) {
-  // Note: This is a better way using the TypeScript feature instead of `&&` or `||` (ts v5.5.0-dev.20240314 I've been using)
-
+  const modelLower = model.toLowerCase();
   const excludeKeywords = ["claude-3-5-haiku-20241022"];
   const visionKeywords = [
     "vision",
@@ -261,18 +260,22 @@ export function isVisionModel(model: string) {
     "claude-3",
     "gemini-1.5",
     "gemini-exp",
+    "gemini-2.0-flash-exp",
     "learnlm",
-    "qwen-vl",
-    "qwen2-vl",
+    "vl",
   ];
   const isGpt4Turbo =
-    model.includes("gpt-4-turbo") && !model.includes("preview");
+    modelLower.includes("gpt-4-turbo") && !modelLower.includes("preview");
 
   return (
-    !excludeKeywords.some((keyword) => model.includes(keyword)) &&
-    (visionKeywords.some((keyword) => model.includes(keyword)) ||
+    !excludeKeywords.some((keyword) =>
+      modelLower.includes(keyword.toLowerCase()),
+    ) &&
+    (visionKeywords.some((keyword) =>
+      modelLower.includes(keyword.toLowerCase()),
+    ) ||
       isGpt4Turbo ||
-      isDalle3(model))
+      isDalle3(modelLower))
   );
 }
 
