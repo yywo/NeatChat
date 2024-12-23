@@ -135,7 +135,7 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
 
 > 等等，包括favicon都将保持与基本色一致
 # preview分支开启
-自1.1.5版本开始，从main分支分裂出去一个单独的preview分支，preview分支会定期合并到main分支，所以大家可以在preview分支体验到最新的功能，但是preview分支不会定期发布版本，所以大家如果想要体验最新功能，请自行编译。
+自1.1.5版本开始，从main分支分裂出去一个单独的preview分支，preview分支会定期合并到main分支，所以大家可以在preview分支体验到最新的功能，但是preview分支不会进行打包，只会打包main分支，不过会打包docker，所以大家如果想要体验最新功能，请自行编译。
 
 # mini分支开启
 自1.1.4版本开始，从main分支分裂出去一个单独的mini分支，main分支后续大部分非实用功能都不会在mini分支适配，mini分支将紧跟nextchat官方更新，而且后续面具，实时语音等等也将剔除。
