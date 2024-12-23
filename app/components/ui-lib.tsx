@@ -479,6 +479,7 @@ export function Selector<T>(props: {
     subTitle?: string;
     value: T;
     disable?: boolean;
+    icon?: JSX.Element;
   }>;
   defaultSelectedValue?: T[] | T;
   onSelection?: (selection: T[]) => void;
@@ -491,6 +492,22 @@ export function Selector<T>(props: {
       : props.defaultSelectedValue !== undefined
       ? [props.defaultSelectedValue]
       : [],
+  );
+
+  // 添加搜索状态
+  const [searchText, setSearchText] = useState("");
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // 添加保持焦点的效果
+  useEffect(() => {
+    const keepFocus = () => inputRef.current?.focus();
+    document.addEventListener("click", keepFocus);
+    return () => document.removeEventListener("click", keepFocus);
+  }, []);
+
+  // 过滤模型列表
+  const filteredItems = props.items.filter((item) =>
+    item.title.toLowerCase().includes(searchText.toLowerCase()),
   );
 
   const handleSelection = (e: MouseEvent, value: T) => {
@@ -509,42 +526,49 @@ export function Selector<T>(props: {
   };
 
   return (
-    <div className={styles["selector"]} onClick={() => props.onClose?.()}>
-      <div className={styles["selector-content"]}>
+    <div className={styles["selector"]} onClick={props.onClose}>
+      <div
+        className={styles["selector-content"]}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <div className={styles["selector-search"]}>
+          <input
+            ref={inputRef}
+            type="text"
+            placeholder="搜索模型"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            autoFocus
+          />
+        </div>
+
         <List>
-          {props.items.map((item, i) => {
-            const selected = selectedValues.includes(item.value);
-            return (
-              <ListItem
-                className={clsx(styles["selector-item"], {
-                  [styles["selector-item-disabled"]]: item.disable,
-                })}
-                key={i}
-                title={item.title}
-                subTitle={item.subTitle}
-                onClick={(e) => {
-                  if (item.disable) {
-                    e.stopPropagation();
-                  } else {
-                    handleSelection(e, item.value);
-                  }
-                }}
-              >
-                {selected ? (
-                  <div
-                    style={{
-                      height: 10,
-                      width: 10,
-                      backgroundColor: "var(--primary)",
-                      borderRadius: 10,
-                    }}
-                  ></div>
-                ) : (
-                  <></>
-                )}
-              </ListItem>
-            );
-          })}
+          {filteredItems.map((item, i) => (
+            <ListItem
+              className={clsx(styles["selector-item"], {
+                [styles["selector-item-disabled"]]: item.disable,
+              })}
+              key={i}
+              title={item.title}
+              subTitle={item.subTitle}
+              icon={item.icon}
+              onClick={(e) => {
+                if (item.disable) {
+                  e.stopPropagation();
+                } else {
+                  handleSelection(e, item.value);
+                }
+              }}
+            >
+              {selectedValues.includes(item.value) ? (
+                <div className={styles["selector-item-selected"]} />
+              ) : (
+                <></>
+              )}
+            </ListItem>
+          ))}
         </List>
       </div>
     </div>

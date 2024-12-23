@@ -310,30 +310,60 @@
   justify-content: center;
   z-index: 999;
 
-  .selector-item-disabled {
-    opacity: 0.6;
-  }
-
   &-content {
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
     min-width: 300px;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+
+    .selector-search {
+      padding: 10px;
+      border-bottom: var(--border-in-light);
+      display: flex;
+      justify-content: center;
+    }
+
+    .selector-search:has(+ .list:empty) {
+      border-bottom: none;
+    }
+
     .list {
-      max-height: 90vh;
-      overflow-x: hidden;
+      border: none;
+      margin-bottom: 0;
       overflow-y: auto;
+      flex-grow: 1;
+      
+      &:has(> :last-child:nth-child(-n+8)) {
+        overflow-y: hidden;
+      }
 
       .list-item {
         cursor: pointer;
-        background-color: var(--white);
-
+        
         &:hover {
-          filter: brightness(0.95);
+          background-color: var(--hover-color);
         }
 
         &:active {
-          filter: brightness(0.9);
+          background-color: var(--hover-color);
         }
       }
     }
   }
+}
+
+.selector-item-selected {
+  width: 10px;
+  height: 10px;
+  background-color: var(--primary);
+  border-radius: 50%;
+}
+
+.selector-item-disabled {
+  opacity: 0.6;
+  cursor: not-allowed !important;
 }
 
