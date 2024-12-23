@@ -1,0 +1,31 @@
+.model-avatar {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  max-width: 30px !important;
+  max-height: 30px !important;
+  object-fit: contain !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.model-avatar svg,
+.model-avatar > svg,
+svg.model-avatar {
+  width: 30px !important;
+  height: 30px !important;
+  min-width: 30px !important;
+  min-height: 30px !important;
+  max-width: 30px !important;
+  max-height: 30px !important;
+  transform: scale(1) !important;
+  flex-shrink: 0 !important;
+}
+
+/* 特别针对 qwen 图标 */
+.model-avatar > svg[data-file*="qwen"],
+svg[data-file*="qwen"].model-avatar {
+  transform: scale(0.75) !important;
+} 
