@@ -19,7 +19,7 @@ import GrokIcon from "../icons/grok.png";
 import Gpt35Icon from "../icons/bot.png";
 import QwenIcon from "../icons/qwen.png";
 
-import "../styles/model-avatar.scss";
+// import "../styles/model-avatar.scss";
 
 export function getEmojiUrl(unified: string, style: EmojiStyle) {
   // Whoever owns this Content Delivery Network (CDN), I am using your CDN to serve emojis

@@ -485,6 +485,7 @@ export function Selector<T>(props: {
   onSelection?: (selection: T[]) => void;
   onClose?: () => void;
   multiple?: boolean;
+  showSearch?: boolean;
 }) {
   const [selectedValues, setSelectedValues] = useState<T[]>(
     Array.isArray(props.defaultSelectedValue)
@@ -533,42 +534,46 @@ export function Selector<T>(props: {
           e.stopPropagation();
         }}
       >
-        <div className={styles["selector-search"]}>
-          <input
-            ref={inputRef}
-            type="text"
-            placeholder="搜索模型"
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            autoFocus
-          />
-        </div>
+        {props.showSearch !== false && (
+          <div className={styles["selector-search"]}>
+            <input
+              ref={inputRef}
+              type="text"
+              placeholder="搜索模型"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              autoFocus
+            />
+          </div>
+        )}
 
         <List>
-          {filteredItems.map((item, i) => (
-            <ListItem
-              className={clsx(styles["selector-item"], {
-                [styles["selector-item-disabled"]]: item.disable,
-              })}
-              key={i}
-              title={item.title}
-              subTitle={item.subTitle}
-              icon={item.icon}
-              onClick={(e) => {
-                if (item.disable) {
-                  e.stopPropagation();
-                } else {
-                  handleSelection(e, item.value);
-                }
-              }}
-            >
-              {selectedValues.includes(item.value) ? (
-                <div className={styles["selector-item-selected"]} />
-              ) : (
-                <></>
-              )}
-            </ListItem>
-          ))}
+          {(props.showSearch === false ? props.items : filteredItems).map(
+            (item, i) => (
+              <ListItem
+                className={clsx(styles["selector-item"], {
+                  [styles["selector-item-disabled"]]: item.disable,
+                })}
+                key={i}
+                title={item.title}
+                subTitle={item.subTitle}
+                icon={item.icon}
+                onClick={(e) => {
+                  if (item.disable) {
+                    e.stopPropagation();
+                  } else {
+                    handleSelection(e, item.value);
+                  }
+                }}
+              >
+                {selectedValues.includes(item.value) ? (
+                  <div className={styles["selector-item-selected"]} />
+                ) : (
+                  <></>
+                )}
+              </ListItem>
+            ),
+          )}
         </List>
       </div>
     </div>
@@ -639,6 +644,55 @@ export function SimpleSelector<T>(props: {
                 props.onClose?.();
               }}
             />
+          ))}
+        </List>
+      </div>
+    </div>
+  );
+}
+
+// 添加一个支持多选的简单选择器组件
+export function SimpleMultipleSelector<T>(props: {
+  items: Array<{
+    title: string;
+    value: T;
+  }>;
+  defaultSelectedValue?: T[];
+  onClose?: () => void;
+  onSelection?: (selection: T[]) => void;
+}) {
+  const [selectedValues, setSelectedValues] = useState<T[]>(
+    props.defaultSelectedValue ?? [],
+  );
+
+  return (
+    <div className={styles["selector"]} onClick={props.onClose}>
+      <div
+        className={clsx(styles["selector-content"], styles["simple"])}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <List>
+          {props.items.map((item, i) => (
+            <ListItem
+              className={styles["selector-item"]}
+              key={i}
+              title={item.title}
+              onClick={() => {
+                const newSelectedValues = selectedValues.includes(item.value)
+                  ? selectedValues.filter((v) => v !== item.value)
+                  : [...selectedValues, item.value];
+                setSelectedValues(newSelectedValues);
+                props.onSelection?.(newSelectedValues);
+              }}
+            >
+              {selectedValues.includes(item.value) ? (
+                <div className={styles["selector-item-selected"]} />
+              ) : (
+                <></>
+              )}
+            </ListItem>
           ))}
         </List>
       </div>

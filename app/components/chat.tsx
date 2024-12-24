@@ -94,6 +94,7 @@ import {
   showConfirm,
   showPrompt,
   showToast,
+  SimpleMultipleSelector,
 } from "./ui-lib";
 import { useNavigate } from "react-router-dom";
 import {
@@ -769,17 +770,16 @@ export function ChatActions(props: {
           />
         )}
         {showPluginSelector && (
-          <Selector
-            multiple
-            defaultSelectedValue={chatStore.currentSession().mask?.plugin}
+          <SimpleMultipleSelector
             items={pluginStore.getAll().map((item) => ({
               title: `${item?.title}@${item?.version}`,
               value: item?.id,
             }))}
+            defaultSelectedValue={chatStore.currentSession().mask?.plugin}
             onClose={() => setShowPluginSelector(false)}
             onSelection={(s) => {
               chatStore.updateTargetSession(session, (session) => {
-                session.mask.plugin = s as string[];
+                session.mask.plugin = s;
               });
             }}
           />

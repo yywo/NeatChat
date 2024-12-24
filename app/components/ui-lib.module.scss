@@ -392,8 +392,9 @@
 .selector-item-selected {
   width: 10px;
   height: 10px;
-  background-color: var(--primary);
   border-radius: 50%;
+  background-color: var(--primary);
+  margin-right: 10px;
 }
 
 .selector-item-disabled {
