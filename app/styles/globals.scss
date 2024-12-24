@@ -1,6 +1,25 @@
 @import "./animation.scss";
 @import "./window.scss";
 
+// Logo text styles
+.logo-text {
+  font-size: 24px;
+  line-height: 1;
+  font-weight: bold;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  transition: none !important;
+  animation: none !important;
+  transform: none !important;
+  text-size-adjust: none;
+  -webkit-text-size-adjust: none;
+
+  * {
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+  }
+}
+
 @mixin light {
   --theme: light;
 

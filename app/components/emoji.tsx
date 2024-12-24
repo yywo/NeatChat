@@ -6,20 +6,24 @@ import EmojiPicker, {
 
 import { ModelType } from "../store";
 
-import BotIcon from "../icons/bot.svg";
-import BlackBotIcon from "../icons/black-bot.svg";
-import ClaudeIcon from "../icons/bot.Claude.png";
-import GeminiIcon from "../icons/bot.Gemini.png";
-import LlamaIcon from "../icons/bot.Llama.png";
-import CohereIcon from "../icons/bot.Cohere.png";
+import ClaudeIcon from "../icons/claude-color.svg";
+import DallEIcon from "../icons/dalle-color.svg";
+import GeminiIcon from "../icons/gemini-color.svg";
+import DouBaoIcon from "../icons/doubao-color.svg";
+import HunYuanIcon from "../icons/hunyuan-color.svg";
+import MetaIcon from "../icons/meta-color.svg";
+import CohereIcon from "../icons/cohere-color.svg";
 import DeepseekIcon from "../icons/deepseek-color.svg";
-import KimiIcon from "../icons/kimi.png";
-import GlmIcon from "../icons/glm.png";
-import GrokIcon from "../icons/grok.png";
-import Gpt35Icon from "../icons/bot.png";
-import QwenIcon from "../icons/qwen.png";
+import MoonShotIcon from "../icons/moonshot.svg";
+import GlmIcon from "../icons/qingyan-color.svg";
+import GrokIcon from "../icons/grok.svg";
+import Gpt35Icon from "../icons/openai-3.5.svg";
+import QwenIcon from "../icons/qwen-color.svg";
+import OpenAIIcon from "../icons/openai.svg";
+import WenXinIcon from "../icons/wenxin-color.svg";
+import IconImage from "../icons/icon.png";
 
-// import "../styles/model-avatar.scss";
+import "../styles/model-avatar.scss";
 
 export function getEmojiUrl(unified: string, style: EmojiStyle) {
   // Whoever owns this Content Delivery Network (CDN), I am using your CDN to serve emojis
@@ -53,41 +57,47 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
 
           if (model.includes("claude")) {
             return (
-              <img
-                src={ClaudeIcon.src}
-                className="user-avatar model-avatar"
-                alt="Claude"
-              />
+              <ClaudeIcon className="user-avatar model-avatar" alt="Claude" />
+            );
+          }
+
+          if (model.includes("dall")) {
+            return (
+              <DallEIcon className="user-avatar model-avatar" alt="DALL-E" />
+            );
+          }
+
+          if (model.includes("wenxin") || model.includes("ernie")) {
+            return (
+              <WenXinIcon className="user-avatar model-avatar" alt="WenXin" />
+            );
+          }
+
+          if (model.includes("doubao")) {
+            return (
+              <DouBaoIcon className="user-avatar model-avatar" alt="DouBao" />
+            );
+          }
+
+          if (model.includes("hunyuan")) {
+            return (
+              <HunYuanIcon className="user-avatar model-avatar" alt="HunYuan" />
             );
           }
 
           if (model.includes("gemini")) {
             return (
-              <img
-                src={GeminiIcon.src}
-                className="user-avatar model-avatar"
-                alt="Gemini"
-              />
+              <GeminiIcon className="user-avatar model-avatar" alt="Gemini" />
             );
           }
 
           if (model.includes("llama")) {
-            return (
-              <img
-                src={LlamaIcon.src}
-                className="user-avatar model-avatar"
-                alt="Llama"
-              />
-            );
+            return <MetaIcon className="user-avatar model-avatar" alt="Meta" />;
           }
 
           if (model.includes("gpt-3.5") || model.includes("gpt3")) {
             return (
-              <img
-                src={Gpt35Icon.src}
-                className="user-avatar model-avatar"
-                alt="GPT-3.5"
-              />
+              <Gpt35Icon className="user-avatar model-avatar" alt="GPT-3.5" />
             );
           }
 
@@ -96,16 +106,14 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
             model.startsWith("chatgpt-4o") ||
             model.startsWith("o1")
           ) {
-            return <BlackBotIcon className="user-avatar model-avatar" />;
+            return (
+              <OpenAIIcon className="user-avatar model-avatar" alt="OpenAI" />
+            );
           }
 
           if (model.includes("command")) {
             return (
-              <img
-                src={CohereIcon.src}
-                className="user-avatar model-avatar"
-                alt="Cohere"
-              />
+              <CohereIcon className="user-avatar model-avatar" alt="Cohere" />
             );
           }
 
@@ -113,47 +121,34 @@ export function Avatar(props: { model?: ModelType; avatar?: string }) {
             return <DeepseekIcon className="user-avatar model-avatar" />;
           }
 
-          if (model.includes("kimi")) {
+          if (model.includes("moonshot")) {
             return (
-              <img
-                src={KimiIcon.src}
+              <MoonShotIcon
                 className="user-avatar model-avatar"
-                alt="Kimi"
+                alt="MoonShot"
               />
             );
           }
 
           if (model.includes("glm")) {
-            return (
-              <img
-                src={GlmIcon.src}
-                className="user-avatar model-avatar"
-                alt="GLM"
-              />
-            );
+            return <GlmIcon className="user-avatar model-avatar" alt="GLM" />;
           }
 
           if (model.includes("grok")) {
-            return (
-              <img
-                src={GrokIcon.src}
-                className="user-avatar model-avatar"
-                alt="Grok"
-              />
-            );
+            return <GrokIcon className="user-avatar model-avatar" alt="Grok" />;
           }
 
           if (model.includes("qwen")) {
-            return (
-              <img
-                src={QwenIcon.src}
-                className="user-avatar model-avatar"
-                alt="Qwen"
-              />
-            );
+            return <QwenIcon className="user-avatar model-avatar" alt="Qwen" />;
           }
 
-          return <BotIcon className="user-avatar model-avatar" />;
+          return (
+            <img
+              src={IconImage.src}
+              className="user-avatar model-avatar"
+              alt="Logo"
+            />
+          );
         })()}
       </div>
     );

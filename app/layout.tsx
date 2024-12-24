@@ -47,6 +47,14 @@ export default function RootLayout({
           crossOrigin="use-credentials"
         ></link>
         <script src="/serviceWorkerRegister.js" defer></script>
+        <style>
+          {`
+            html {
+              text-size-adjust: 100%;
+              -webkit-text-size-adjust: 100%;
+            }
+          `}
+        </style>
       </head>
       <body>
         {children}
