@@ -12,7 +12,7 @@ import ClaudeIcon from "../icons/bot.Claude.png";
 import GeminiIcon from "../icons/bot.Gemini.png";
 import LlamaIcon from "../icons/bot.Llama.png";
 import CohereIcon from "../icons/bot.Cohere.png";
-import DeepseekIcon from "../icons/deepseek.svg";
+import DeepseekIcon from "../icons/deepseek-color.svg";
 import KimiIcon from "../icons/kimi.png";
 import GlmIcon from "../icons/glm.png";
 import GrokIcon from "../icons/grok.png";

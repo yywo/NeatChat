@@ -574,6 +574,7 @@ export function Selector<T>(props: {
     </div>
   );
 }
+
 export function FullScreen(props: any) {
   const { children, right = 10, top = 10, ...rest } = props;
   const ref = useRef<HTMLDivElement>();
@@ -606,6 +607,41 @@ export function FullScreen(props: any) {
         />
       </div>
       {children}
+    </div>
+  );
+}
+
+// 添加一个简单的选择器组件用于 sidebar
+export function SimpleSelector<T>(props: {
+  items: Array<{
+    title: string;
+    value: T;
+  }>;
+  onClose?: () => void;
+  onSelection?: (selection: T[]) => void;
+}) {
+  return (
+    <div className={styles["selector"]} onClick={props.onClose}>
+      <div
+        className={clsx(styles["selector-content"], styles["simple"])}
+        onClick={(e) => {
+          e.stopPropagation();
+        }}
+      >
+        <List>
+          {props.items.map((item, i) => (
+            <ListItem
+              className={styles["selector-item"]}
+              key={i}
+              title={item.title}
+              onClick={() => {
+                props.onSelection?.([item.value]);
+                props.onClose?.();
+              }}
+            />
+          ))}
+        </List>
+      </div>
     </div>
   );
 }

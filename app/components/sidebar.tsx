@@ -29,7 +29,7 @@ import {
 import { Link, useNavigate } from "react-router-dom";
 import { isIOS, useMobileScreen } from "../utils";
 import dynamic from "next/dynamic";
-import { showConfirm, Selector } from "./ui-lib";
+import { showConfirm, SimpleSelector } from "./ui-lib";
 import clsx from "clsx";
 
 const ChatList = dynamic(async () => (await import("./chat-list")).ChatList, {
@@ -259,7 +259,7 @@ export function SideBar(props: { className?: string }) {
           />
         </div>
         {showPluginSelector && (
-          <Selector
+          <SimpleSelector
             items={[
               ...PLUGINS.map((item) => {
                 return {
