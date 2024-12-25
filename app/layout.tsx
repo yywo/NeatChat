@@ -8,6 +8,17 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getServerSideConfig } from "./config/server";
 const serverConfig = getServerSideConfig();
 
+// 添加字体优化
+const fontStyleOptimization = `
+  @font-face {
+    font-family: 'Noto Sans';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local(-apple-system), local(BlinkMacSystemFont);
+  }
+`;
+
 export const metadata: Metadata = {
   title: "NeatChat",
   description: "Your personal ChatGPT Chat Bot.",
@@ -48,6 +59,7 @@ export default function RootLayout({
           crossOrigin="use-credentials"
         ></link>
         <script src="/serviceWorkerRegister.js" defer></script>
+        <style dangerouslySetInnerHTML={{ __html: fontStyleOptimization }} />
         <style>
           {`
             html {
