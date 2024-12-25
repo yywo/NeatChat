@@ -24,6 +24,7 @@ import React, {
 } from "react";
 import { IconButton } from "./button";
 import clsx from "clsx";
+import { useMobileScreen } from "../utils";
 
 export function Popover(props: {
   children: JSX.Element;
@@ -526,6 +527,8 @@ export function Selector<T>(props: {
     }
   };
 
+  const isMobileScreen = useMobileScreen();
+
   return (
     <div className={styles["selector"]} onClick={props.onClose}>
       <div
@@ -542,7 +545,7 @@ export function Selector<T>(props: {
               placeholder="搜索模型"
               value={searchText}
               onChange={(e) => setSearchText(e.target.value)}
-              autoFocus
+              autoFocus={!isMobileScreen}
             />
           </div>
         )}
@@ -660,6 +663,7 @@ export function SimpleMultipleSelector<T>(props: {
   defaultSelectedValue?: T[];
   onClose?: () => void;
   onSelection?: (selection: T[]) => void;
+  showSearch?: boolean;
 }) {
   const [selectedValues, setSelectedValues] = useState<T[]>(
     props.defaultSelectedValue ?? [],

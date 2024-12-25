@@ -672,6 +672,7 @@ export function ChatActions(props: {
                 showToast(model);
               }
             }}
+            showSearch={config.enableModelSearch}
           />
         )}
 
@@ -699,6 +700,7 @@ export function ChatActions(props: {
               });
               showToast(size);
             }}
+            showSearch={config.enableModelSearch}
           />
         )}
 
@@ -726,6 +728,7 @@ export function ChatActions(props: {
               });
               showToast(quality);
             }}
+            showSearch={config.enableModelSearch}
           />
         )}
 
@@ -753,6 +756,7 @@ export function ChatActions(props: {
               });
               showToast(style);
             }}
+            showSearch={config.enableModelSearch}
           />
         )}
 
@@ -782,6 +786,7 @@ export function ChatActions(props: {
                 session.mask.plugin = s;
               });
             }}
+            showSearch={config.enableModelSearch}
           />
         )}
 
