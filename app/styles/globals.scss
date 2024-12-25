@@ -12,12 +12,21 @@
   transform: none !important;
   text-size-adjust: none;
   -webkit-text-size-adjust: none;
+  font-display: block;
+  visibility: visible !important;
+  opacity: 1 !important;
 
   * {
     transition: none !important;
     animation: none !important;
     transform: none !important;
   }
+}
+
+// Logo text preload styles
+.logo-text-preload {
+  opacity: 0;
+  visibility: hidden;
 }
 
 @mixin light {
