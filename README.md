@@ -1,7 +1,5 @@
 # NeatChat
-NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告。
-更改了配色，去除了多语言支持，只保留中文和英文，只为精简。
-
+NeatChat是基于NextChat的一个全新的版本，并进行了多项优化。NeatChat目前有三个分支，分别是main分支，mini分支，preview分支，preview分支是main分支的预览分支，在稳定之后会合并到main分支，mini分支是单独的一个精简分支。main分支的使命在于基于优化UI和新增功能，以至于后面脱离NextChat，独立发展，而mini分支则会在NextChat的基础上进行微调和删减，紧跟NextChat的步伐，只有main分支特别重要的功能才会下放到mini分支。由于main分支和mini分支的目的不一样，所以也将有两套UI。
 
 
 > [演示站](https://neat.tz889.us.kg)
@@ -85,7 +83,7 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
     <td style="padding: 8px; border: 1px solid #ddd;">开启mini分支，去除面具，实时语音等不常用功能</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">次级</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2天</td>
-    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">已完成</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">7</td>
@@ -115,6 +113,13 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">已完成</td>
   </tr>
+    <tr>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">11</td>
+    <td style="padding: 8px; border: 1px solid #ddd;">适配Lobe Icons，新增模型搜索功能（可关闭）</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">积极</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">已完成</td>
+  </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">......</td>
     <td style="padding: 8px; border: 1px solid #ddd;">各位朋友们的建议</td>
@@ -124,16 +129,6 @@ NeatChat是NextChat的去广告版本，使用NextChat的UI，并移除了广告
   </tr>
 </table>
 
-# 多彩基本色预览
-
-## 硅基紫
-![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B37E636D3-3979-4EEA-AA0A-E0BBFC0F9011%7D.png)
-## 金色
-![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B1480B42B-F15C-4E1A-BA4F-293E01AEE82E%7D.png)
-## 粉色
-![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B5AB5B0F2-C040-461D-98C9-0762DC330EE5%7D.png)
-
-> 等等，包括favicon都将保持与基本色一致
 # preview分支开启
 自1.1.5版本开始，从main分支分裂出去一个单独的preview分支，preview分支会定期合并到main分支，大家可以在preview分支体验到最新的功能，但是preview分支不会进行打包，只会打包main分支，不过会打包docker，所以大家如果想要体验最新功能，请自行编译。
 
