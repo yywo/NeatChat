@@ -1,30 +1,15 @@
 # NeatChat
-NeatChat是基于NextChat的一个全新的版本，并进行了多项优化。NeatChat目前有三个分支，分别是main分支，mini分支，preview分支，preview分支是main分支的预览分支，在稳定之后会合并到main分支，mini分支是单独的一个精简分支。main分支的使命在于基于优化UI和新增功能，以至于后面脱离NextChat，独立发展，而mini分支则会在NextChat的基础上进行微调和删减，紧跟NextChat的步伐，只有main分支特别重要的功能才会下放到mini分支。由于main分支和mini分支的目的不一样，所以也将有两套UI。
+NeatChat是基于NextChat的一个全新的版本，并进行了多项优化。NeatChat目前有三个分支，分别是main分支，mini分支，preview分支。
 
+preview分支是main分支的预览分支，在稳定之后会合并到main分支，mini分支是单独的一个精简分支（mini分支请移步至[NeatChat-Mini](https://github.com/tianzhentech/NeatChat-Mini)）。
 
-> [演示站](https://neat.tz889.us.kg)
+main分支的使命在于优化UI和新增功能，以至于后面脱离NextChat，独立发展，而mini分支则会在NextChat的基础上进行微调和删减，紧跟NextChat的步伐，只有main分支特别重要的功能才会下放到mini分支。由于main分支和mini分支的目的不一样，所以也将有两套UI。
 
-# 新旧对比
-
-<table style="border-collapse: collapse; border: 0.2px solid #ddd; width: 100%;">
-  <tr>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">原版</th>
-    <th style="border: 0.2px solid #ddd; padding: 8px; text-align: center;">新版</th>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135339.png" style="width: 100%; height: auto;"/></td>
-    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20191534.png" style="width: 100%; height: auto;"/></td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135556.png" style="width: 100%; height: auto;"/></td>
-    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B978B620E-77AF-44CB-A871-2DFC075E56FD%7D.png" style="width: 100%; height: auto;"/></td>
-  </tr>
-  <tr>
-    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20135643.png" style="width: 100%; height: auto;"/></td>
-    <td style="border: 0.2px solid #ddd; padding: 4px;"><img src="https://raw.githubusercontent.com/tianzhentech/static/main/images/%E5%B1%8F%E5%B9%95%E6%88%AA%E5%9B%BE%202024-12-15%20191722.png" style="width: 100%; height: auto;"/></td>
-  </tr>
-</table>
-
+# 预览
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B326DD837-A2FE-4603-A289-47FD5FED329A%7D.png)
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B1FB6B249-72D5-42F0-B861-7FE95ADCEEEE%7D.png)
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/%7B6656232E-09F3-472D-A2B4-621DDD57D9CC%7D.png)
+> 更多内容请移步[演示站](https://neat.tz889.us.kg)
 
 # 快速开始
 1. 支持vercel一键部署：[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tianzhentech/NeatChat.git)
@@ -104,7 +89,7 @@ NeatChat是基于NextChat的一个全新的版本，并进行了多项优化。N
     <td style="padding: 8px; border: 1px solid #ddd;">增加上传文件功能，改进由于发送文本过长导致的输入框卡顿问题</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">次级</td>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">2-3天</td>
-    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">计划中</td>
+    <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">即将开启</td>
   </tr>
   <tr>
     <td style="text-align: center; padding: 8px; border: 1px solid #ddd;">10</td>
@@ -129,12 +114,8 @@ NeatChat是基于NextChat的一个全新的版本，并进行了多项优化。N
   </tr>
 </table>
 
-# preview分支开启
-自1.1.5版本开始，从main分支分裂出去一个单独的preview分支，preview分支会定期合并到main分支，大家可以在preview分支体验到最新的功能，但是preview分支不会进行打包，只会打包main分支，不过会打包docker，所以大家如果想要体验最新功能，请自行编译。
-
-# mini分支开启
-自1.1.4版本开始，从main分支分裂出去一个单独的mini分支，main分支后续大部分非实用功能都不会在mini分支适配，mini分支将紧跟nextchat官方更新，而且后续面具，实时语音等等也将剔除。
-## Star History
+# 打包说明
+由于preview分支会定期合并到main分支，为了避免造成不稳定的体验，也为了避免浪费过多的打包时间，所以目前所有平台只会打包main分支，也即只会打包正式版而不是预览版，preview更新的内容还请各位自行下载源码体验。
 
 <div style="width: 100%;">
   <a href="https://star-history.com/#tianzhentech/ChatGPT-Next-Web&Date">
