@@ -492,18 +492,7 @@ export function ChatActions(props: {
     session.mask.modelConfig?.providerName || ServiceProvider.OpenAI;
   const allModels = useAllModels();
   const models = useMemo(() => {
-    const filteredModels = allModels.filter((m) => m.available);
-    const defaultModel = filteredModels.find((m) => m.isDefault);
-
-    if (defaultModel) {
-      const arr = [
-        defaultModel,
-        ...filteredModels.filter((m) => m !== defaultModel),
-      ];
-      return arr;
-    } else {
-      return filteredModels;
-    }
+    return allModels.filter((m) => m.available);
   }, [allModels]);
   const currentModelName = useMemo(() => {
     const model = models.find(
@@ -555,6 +544,8 @@ export function ChatActions(props: {
       );
     }
   }, [chatStore, currentModel, models, session]);
+
+  const showModelSearchOption = config.enableModelSearch ?? false;
 
   return (
     <div className={styles["chat-input-actions"]}>
@@ -672,7 +663,7 @@ export function ChatActions(props: {
                 showToast(model);
               }
             }}
-            showSearch={config.enableModelSearch}
+            showSearch={config.enableModelSearch ?? false}
           />
         )}
 
@@ -700,7 +691,7 @@ export function ChatActions(props: {
               });
               showToast(size);
             }}
-            showSearch={config.enableModelSearch}
+            showSearch={false}
           />
         )}
 
@@ -728,7 +719,7 @@ export function ChatActions(props: {
               });
               showToast(quality);
             }}
-            showSearch={config.enableModelSearch}
+            showSearch={false}
           />
         )}
 
@@ -756,7 +747,7 @@ export function ChatActions(props: {
               });
               showToast(style);
             }}
-            showSearch={config.enableModelSearch}
+            showSearch={false}
           />
         )}
 
@@ -786,7 +777,7 @@ export function ChatActions(props: {
                 session.mask.plugin = s;
               });
             }}
-            showSearch={config.enableModelSearch}
+            showSearch={false}
           />
         )}
 

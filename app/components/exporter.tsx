@@ -23,7 +23,7 @@ import CopyIcon from "../icons/copy.svg";
 import LoadingIcon from "../icons/three-dots.svg";
 import ChatGptIcon from "../icons/chatgpt.png";
 import ShareIcon from "../icons/share.svg";
-import BotIcon from "../icons/icon.png";
+import NeatIcon from "../icons/neat.svg";
 
 import DownloadIcon from "../icons/download.svg";
 import { useEffect, useMemo, useRef, useState } from "react";
@@ -409,15 +409,7 @@ export function PreviewActions(props: {
 
 function ExportAvatar(props: { avatar: string }) {
   if (props.avatar === DEFAULT_MASK_AVATAR) {
-    return (
-      <img
-        src={BotIcon.src}
-        width={30}
-        height={30}
-        alt="bot"
-        className="user-avatar"
-      />
-    );
+    return <NeatIcon width={30} height={30} className="user-avatar" />;
   }
 
   return <Avatar avatar={props.avatar} />;
