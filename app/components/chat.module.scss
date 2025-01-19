@@ -361,12 +361,9 @@
     }
     @media screen and (max-width: 600px) {
       font-size: 13px;
-      max-width: 120px;
-      hyphens: auto;
-      overflow-wrap: break-word;
-      word-break: break-word;
-      text-align: justify;
-      line-height: 1.2;
+      max-width: none;
+      white-space: nowrap;
+      transition: all 0.3s ease;
     }
     color: var(--black);
     margin-left: 6px;
@@ -388,6 +385,18 @@
       opacity: 1;
       pointer-events: all;
       transform: scale(1) translateY(0);
+    }
+
+    @media screen and (max-width: 600px) {
+      .chat-model-name {
+        max-width: 120px;
+        white-space: normal;
+        hyphens: auto;
+        overflow-wrap: break-word;
+        word-break: break-word;
+        text-align: justify;
+        line-height: 1.2;
+      }
     }
   }
 }
