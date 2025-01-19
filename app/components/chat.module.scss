@@ -354,7 +354,12 @@
   }
 
   .chat-model-name {
-    font-size: 12px;
+    @media screen and (min-width: 600px) {  // 桌面端
+      font-size: 13px;
+    }
+    @media screen and (max-width: 600px) {  // 手机端
+      font-size: 12px;
+    }
     color: var(--black);
     margin-left: 6px;
   }
@@ -758,4 +763,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.chat-message-model {
+  @media screen and (min-width: 600px) {
+    font-size: 12px;
+  }
 }
