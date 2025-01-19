@@ -354,14 +354,17 @@
   }
 
   .chat-model-name {
-    @media screen and (min-width: 600px) {  // 桌面端
+    @media screen and (min-width: 600px) {
       font-size: 13px;
     }
-    @media screen and (max-width: 600px) {  // 手机端
+    @media screen and (max-width: 600px) {
       font-size: 12px;
     }
     color: var(--black);
     margin-left: 6px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
