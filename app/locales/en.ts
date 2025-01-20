@@ -663,7 +663,8 @@ const en: LocaleType = {
     },
   },
   Plugin: {
-    Name: "Plugin",
+    Name: "Plugins",
+    EnableWeb: "Enable Web Access",
     Page: {
       Title: "Plugins",
       SubTitle: (count: number) => `${count} plugins`,

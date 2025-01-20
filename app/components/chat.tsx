@@ -641,25 +641,19 @@ export function ChatActions(props: {
               icon: <Avatar model={m.name} />,
             }))}
             onClose={() => setShowModelSelector(false)}
-            onSelection={(s) => {
-              if (s.length === 0) return;
-              const [model, providerName] = getModelProvider(s[0]);
+            onSelection={(m) => {
+              if (m.length === 0) return;
+              const [model, providerName] = getModelProvider(m[0]);
               chatStore.updateTargetSession(session, (session) => {
                 session.mask.modelConfig.model = model as ModelType;
                 session.mask.modelConfig.providerName =
                   providerName as ServiceProvider;
-                session.mask.syncGlobalConfig = false;
+                // 如果切换到非 gemini-2.0-flash-exp 模型，清除插件选择
+                if (model !== "gemini-2.0-flash-exp") {
+                  session.mask.plugin = [];
+                }
               });
-              if (providerName == "ByteDance") {
-                const selectedModel = models.find(
-                  (m) =>
-                    m.name == model &&
-                    m?.provider?.providerName == providerName,
-                );
-                showToast(selectedModel?.displayName ?? "");
-              } else {
-                showToast(model);
-              }
+              showToast(model);
             }}
             showSearch={config.enableModelSearch ?? false}
           />
@@ -749,26 +743,35 @@ export function ChatActions(props: {
           />
         )}
 
-        {showPlugins(currentProviderName, currentModel) &&
-          config.enablePlugins && (
-            <ChatAction
-              onClick={() => {
-                if (pluginStore.getAll().length == 0) {
-                  navigate(Path.Plugins);
-                } else {
-                  setShowPluginSelector(true);
-                }
-              }}
-              text={Locale.Plugin.Name}
-              icon={<PluginIcon />}
-            />
-          )}
+        {showPlugins(currentProviderName, currentModel) && (
+          <ChatAction
+            onClick={() => {
+              if (currentModel === "gemini-2.0-flash-exp") {
+                setShowPluginSelector(true);
+              } else {
+                navigate(Path.Plugins);
+              }
+            }}
+            text={Locale.Plugin.Name}
+            icon={<PluginIcon />}
+          />
+        )}
         {showPluginSelector && (
           <SimpleMultipleSelector
-            items={pluginStore.getAll().map((item) => ({
-              title: `${item?.title}@${item?.version}`,
-              value: item?.id,
-            }))}
+            items={[
+              ...(currentModel === "gemini-2.0-flash-exp"
+                ? [
+                    {
+                      title: Locale.Plugin.EnableWeb,
+                      value: "googleSearch",
+                    },
+                  ]
+                : []),
+              ...pluginStore.getAll().map((item) => ({
+                title: `${item?.title}@${item?.version}`,
+                value: item?.id,
+              })),
+            ]}
             defaultSelectedValue={chatStore.currentSession().mask?.plugin}
             onClose={() => setShowPluginSelector(false)}
             onSelection={(s) => {
@@ -1988,7 +1991,9 @@ function _Chat() {
                         <div className={styles["chat-message-action-date"]}>
                           {isContext
                             ? Locale.Chat.IsContext
-                            : message.date.toLocaleString()}
+                            : message.role === "system"
+                            ? message.date.toLocaleString()
+                            : ""}
                         </div>
                       </div>
                     </div>
