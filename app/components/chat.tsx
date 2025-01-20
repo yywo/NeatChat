@@ -648,6 +648,7 @@ export function ChatActions(props: {
                 session.mask.modelConfig.model = model as ModelType;
                 session.mask.modelConfig.providerName =
                   providerName as ServiceProvider;
+                session.mask.syncGlobalConfig = false;
                 // 如果切换到非 gemini-2.0-flash-exp 模型，清除插件选择
                 if (model !== "gemini-2.0-flash-exp") {
                   session.mask.plugin = [];
