@@ -29,15 +29,11 @@ main分支的使命在于优化UI和新增功能，以至于后面脱离NextChat
 </div>
 
 <script>
-  // 检测用户的主题偏好
-  const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
-
-  // 根据主题设置背景颜色
+  // 获取周围元素的背景颜色
   const container = document.getElementById('background-container');
-  if (prefersDarkScheme) {
-    container.style.backgroundColor = '#181818'; // 黑色主题背景
-  } else {
-    container.style.backgroundColor = '#FFFFFF'; // 白色主题背景
-  }
+  const parentBackgroundColor = getComputedStyle(container.parentElement).backgroundColor;
+
+  // 设置背景颜色为周围元素的颜色
+  container.style.backgroundColor = parentBackgroundColor;
 </script>
 
