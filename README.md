@@ -22,9 +22,23 @@ main分支的使命在于优化UI和新增功能，以至于后面脱离NextChat
 # 打包说明
 由于preview分支会定期合并到main分支，为了避免造成不稳定的体验，也为了避免浪费过多的打包时间，所以目前所有平台只会打包main分支，也即只会打包正式版而不是预览版，preview更新的内容还请各位自行下载源码体验。
 
-<div id="background-container" style="width: 100%; padding: 10px; background-color: #FFFFFF;"> <!-- 手动设置为白色 -->
-  <a href="https://star-history.com/#tianzhentech/ChatGPT-Next-Web&Date">
-    <img src="https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date" style="width: 100%; height: auto;">
-  </a>
-</div>
+<picture>
+  <source
+    media="(prefers-color-scheme: dark)"
+    srcset="
+      https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date&bg=181818
+    "
+  />
+  <source
+    media="(prefers-color-scheme: light)"
+    srcset="
+      https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date
+    "
+  />
+  <img
+    alt="Star History Chart"
+    src="https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date"
+  />
+</picture>
+
 
