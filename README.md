@@ -26,19 +26,18 @@ main分支的使命在于优化UI和新增功能，以至于后面脱离NextChat
   <source
     media="(prefers-color-scheme: dark)"
     srcset="
-      https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date&bg=181818
+      https://api.star-history.com/svg?repos=tianzhentech/NeatChat&type=Date&theme=dark
     "
   />
   <source
     media="(prefers-color-scheme: light)"
     srcset="
-      https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date
+      https://api.star-history.com/svg?repos=tianzhentech/NeatChat&type=Date
     "
   />
   <img
     alt="Star History Chart"
-    src="https://api.star-history.com/svg?repos=tianzhentech/ChatGPT-Next-Web&type=Date"
+    src="https://api.star-history.com/svg?repos=tianzhentech/NeatChat&type=Date"
   />
 </picture>
-
 
