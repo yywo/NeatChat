@@ -24,7 +24,7 @@ main分支的使命在于优化UI和新增功能，以至于后面脱离NextChat
 
 ## Star History
 
-<a href="https://star-history.com/#tianzhentech/NeatChat&Date">
+<a>
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=tianzhentech/NeatChat&type=Date&theme=dark" />
    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=tianzhentech/NeatChat&type=Date" />
