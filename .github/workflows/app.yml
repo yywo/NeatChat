@@ -63,6 +63,8 @@ jobs:
             $windowsVersion = $version + '.0'
           }
           echo "WINDOWS_VERSION=$windowsVersion" >> $env:GITHUB_ENV
+      - name: Change directory to project root
+        run: cd ./src-tauri  # 确保切换到包含 Cargo.toml 的目录
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
