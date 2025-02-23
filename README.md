@@ -21,6 +21,8 @@ main分支的使命在于优化UI和新增功能，以至于后面脱离NextChat
 
 # 打包说明
 由于preview分支会定期合并到main分支，为了避免造成不稳定的体验，也为了避免浪费过多的打包时间，所以目前所有平台只会打包main分支，也即只会打包正式版而不是预览版，preview更新的内容还请各位自行下载源码体验。
+
+
 <a>
  <picture>
    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=tianzhentech/NeatChat&type=Date&theme=dark" />
