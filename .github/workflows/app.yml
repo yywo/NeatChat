@@ -84,6 +84,18 @@ jobs:
           TAURI_KEY_PASSWORD: ${{ secrets.TAURI_KEY_PASSWORD }}
         with:
           releaseId: ${{ needs.create-release.outputs.release_id }}
+      - name: Set MSI compatible version
+        run: |
+          # 获取原始版本号
+          original_version=$(node -p "require('./src-tauri/tauri.conf.json').package.version")
+          # 将预发布版本转换为 MSI 兼容的格式 (例如: 1.1.11-preview.1 -> 1.1.11.1)
+          msi_version=$(echo $original_version | sed -E 's/-preview\.(.*)/.\1/' | sed 's/[^0-9.]*//g')
+          # 如果没有预发布号，添加 .0
+          if [[ "$msi_version" == "$original_version" ]]; then
+            msi_version="$msi_version.0"
+          fi
+          # 更新 tauri.conf.json 中的版本号
+          jq --arg version "$msi_version" '.package.version = $version' ./src-tauri/tauri.conf.json > tmp.$$.json && mv tmp.$$.json ./src-tauri/tauri.conf.json
 
   publish-release:
     permissions:
