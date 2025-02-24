@@ -1,4 +1,11 @@
+<div align="center">
+
 # NeatChat
+
+简体中文 | [English](README.en.md)
+</div>
+
+
 NeatChat是基于NextChat的一个全新的版本，并进行了多项优化。NeatChat目前有三个分支，分别是main分支，mini分支，preview分支。
 
 preview分支是main分支的预览分支，在稳定之后会合并到main分支，mini分支是单独的一个精简分支（mini分支请移步至[NeatChat-Mini](https://github.com/tianzhentech/NeatChat-Mini)）。
