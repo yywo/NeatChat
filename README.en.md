@@ -1,8 +1,18 @@
 <div align="center">
 
-# NeatChat
-English | [简体中文](README.md)
+![NeatChat](https://socialify.git.ci/tianzhentech/NeatChat/image?description=1&font=Inter&logo=+https%3A%2F%2Fnc.tianz.me%2Fneat.svg&name=1&pattern=Solid&theme=Auto)
+
+![Stars](https://img.shields.io/github/stars/tianzhentech/neatchat)
+![Forks](https://img.shields.io/github/forks/tianzhentech/neatchat)
+![Web](https://img.shields.io/badge/Web-PWA-orange?logo=microsoftedge)
+![Web](https://img.shields.io/badge/-Windows-blue?logo=windows)
+![Release Badge](https://img.shields.io/github/v/release/tianzhentech/neatchat.svg)
+![License](https://img.shields.io/github/license/tianzhentech/neatchat.svg)
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tianzhentech/NeatChat.git)
+
+简体中文 | [English](README.en.md)
 </div>
+
 
 NeatChat is a new version based on NextChat with multiple optimizations. NeatChat currently has three branches: main branch, mini branch, and preview branch.
 
