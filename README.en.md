@@ -34,8 +34,14 @@ The mission of the main branch is to optimize UI and add new features, eventuall
 
 > For detailed usage, please refer to [NextChat](https://github.com/ChatGPTNextWeb/ChatGPT-Next-Web)
 
-# Build Notes
-Since the preview branch will be periodically merged into the main branch, to avoid creating an unstable experience and wasting too much build time, all platforms will only build the main branch. This means only official versions will be built rather than preview versions. For preview updates, please download the source code to experience them yourself.
+
+
+# Version Description
+Starting from `v1.1.12`, a new version numbering scheme will be adopted. All stable releases will only retain three digits, such as the upcoming `v1.1.13` and `v1.1.14`, which will represent the latest version on the main branch. All four-digit versions, such as `v1.1.12.1` and `v1.1.12.2`, will be incremental updates on the preview branch and will be released as `Pre-release`. All incremental updates on the preview branch will still be regularly merged into the next stable release.
+
+This change is made to create a more compatible versioning scheme for multi-platform packaging, eliminating some unnecessary complications.
+
+
 
 <a>
  <picture>
