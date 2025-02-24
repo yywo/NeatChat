@@ -1,6 +1,6 @@
 <div align="center">
 
-![NeatChat](https://socialify.git.ci/tianzhentech/NeatChat/image?description=1&font=Inter&logo=+https%3A%2F%2Fnc.tianz.me%2Fneat.svg&name=1&pattern=Solid&theme=Auto)
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/NeatChat-Dark.svg)
 
 ![Stars](https://img.shields.io/github/stars/tianzhentech/neatchat)
 ![Forks](https://img.shields.io/github/forks/tianzhentech/neatchat)
