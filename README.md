@@ -8,6 +8,7 @@
 ![Web](https://img.shields.io/badge/-Windows-blue?logo=windows)
 ![Release Badge](https://img.shields.io/github/v/release/tianzhentech/neatchat.svg)
 ![License](https://img.shields.io/github/license/tianzhentech/neatchat.svg)
+
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tianzhentech/NeatChat.git)
 
 简体中文 | [English](README.en.md)
