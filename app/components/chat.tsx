@@ -1848,10 +1848,6 @@ function _Chat() {
                               message.content.length === 0 &&
                               !isUser
                             }
-                            onDoubleClickCapture={() => {
-                              if (!isMobileScreen) return;
-                              setUserInput(getMessageTextContent(message));
-                            }}
                             fontSize={fontSize}
                             fontFamily={fontFamily}
                             parentRef={scrollRef}
