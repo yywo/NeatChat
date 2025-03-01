@@ -281,11 +281,16 @@ function formatThinkText(text: string): string {
   if (text.startsWith("<think>") && !text.includes("</think>")) {
     // 获取 <think> 后的所有内容
     const thinkContent = text.slice("<think>".length);
-    // 渲染为"思考中"状态，添加加载动画
+    // 给每一行添加引用符号
+    const quotedContent = thinkContent
+      .split("\n")
+      .map((line: string) => (line.trim() ? `> ${line}` : ">"))
+      .join("\n");
+
     return `<details open>
 <summary>${Locale.NewChat.Thinking} <span class="thinking-loader"></span></summary>
 
-${thinkContent}
+${quotedContent}
 
 </details>`;
   }
@@ -293,11 +298,16 @@ ${thinkContent}
   // 处理完整的 think 标签
   const pattern = /^<think>([\s\S]*?)<\/think>/;
   return text.replace(pattern, (match, thinkContent) => {
-    // 渲染为"思考完成"状态
+    // 给每一行添加引用符号
+    const quotedContent = thinkContent
+      .split("\n")
+      .map((line: string) => (line.trim() ? `> ${line}` : ">"))
+      .join("\n");
+
     return `<details open>
 <summary>${Locale.NewChat.Think}</summary>
 
-${thinkContent}
+${quotedContent}
 
 </details>`;
   });

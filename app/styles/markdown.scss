@@ -131,6 +131,8 @@
         transition: transform 0.2s;
         width: 1em;
         text-align: center;
+        position: relative;
+        left: -0.1em;
       }
 
       &:focus {
@@ -148,19 +150,7 @@
 
     & > *:not(summary) {
       padding-left: 1.5em;
-      color: var(--color-fg-subtle);
-      font-size: 0.95em;
       position: relative;
-    }
-
-    &[open]:before {
-      content: '';
-      position: absolute;
-      top: 1.5em;
-      left: calc(0.5em - 1px);
-      height: calc(100% - 1.5em);
-      width: 2px;
-      background-color: var(--color-border-muted);
     }
 
     .thinking-loader {
@@ -181,6 +171,29 @@
       to {
         transform: rotate(360deg);
       }
+    }
+
+    blockquote, 
+    > p > blockquote {
+      margin: 0;
+      padding-left: 1.5em;
+      border-left: none;
+      position: relative;
+      font-size: 0.9em;
+
+      &::before {
+        content: '';
+        position: absolute;
+        left: calc(0.45em - 1px);
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: var(--color-border-muted);
+      }
+    }
+
+    > blockquote {
+      margin-top: 0;
     }
   }
 }
