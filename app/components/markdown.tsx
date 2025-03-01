@@ -379,10 +379,12 @@ export function Markdown(
 ) {
   const mdRef = useRef<HTMLDivElement>(null);
   const [autoScroll, setAutoScroll] = useState(true);
+  const lastContentRef = useRef(props.content);
+  const lastScrollTopRef = useRef(0);
 
   // 检测是否滚动到底部
   const checkIfAtBottom = (target: HTMLDivElement) => {
-    const threshold = 20; // 将阈值从 100px 改为 20px
+    const threshold = 20;
     const bottomPosition =
       target.scrollHeight - target.scrollTop - target.clientHeight;
     return bottomPosition <= threshold;
@@ -394,6 +396,7 @@ export function Markdown(
     if (!parent) return;
 
     const handleScroll = () => {
+      lastScrollTopRef.current = parent.scrollTop;
       const isAtBottom = checkIfAtBottom(parent);
       setAutoScroll(isAtBottom);
     };
@@ -404,16 +407,15 @@ export function Markdown(
 
   // 自动滚动效果
   useEffect(() => {
-    const scrollToBottom = () => {
-      if (props.parentRef?.current && autoScroll) {
-        const parent = props.parentRef.current;
-        parent.scrollTop = parent.scrollHeight;
-      }
-    };
+    const parent = props.parentRef?.current;
+    if (!parent || props.content === lastContentRef.current) return;
 
-    if (props.content) {
-      scrollToBottom();
+    // 只有当之前开启了自动滚动，且内容发生变化时才滚动
+    if (autoScroll) {
+      parent.scrollTop = parent.scrollHeight;
     }
+
+    lastContentRef.current = props.content;
   }, [props.content, props.parentRef, autoScroll]);
 
   return (

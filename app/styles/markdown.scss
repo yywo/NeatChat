@@ -1,3 +1,18 @@
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button,
+[role="button"],
+a,
+.clickable,
+summary,
+.chat-input-action,
+.window-action-button,
+.icon-button {
+  -webkit-tap-highlight-color: transparent !important;
+}
+
 @mixin light {
   color-scheme: light;
   --color-prettylights-syntax-comment: #6e7781;
@@ -111,6 +126,8 @@
       list-style: none;
       user-select: none;
       -webkit-user-select: none;
+      display: inline-block;
+      -webkit-tap-highlight-color: transparent;
       
       &:hover {
         color: rgb(49, 94, 248);
@@ -141,6 +158,10 @@
 
       &:focus-visible {
         outline: none;
+      }
+
+      &:active {
+        background: none;
       }
     }
 

@@ -285,6 +285,11 @@
   flex-direction: column;
   position: relative;
   height: 100%;
+  touch-action: pan-y;
+  
+  @media screen and (max-width: 600px) {
+    overscroll-behavior-x: contain;
+  }
 }
 
 .chat-body {
@@ -314,6 +319,7 @@
 .chat-message {
   display: flex;
   flex-direction: row;
+  margin-top: 20px;
 
   &:last-child {
     animation: slide-in ease 0.3s;
@@ -330,7 +336,7 @@
 }
 
 .chat-message-header {
-  margin-top: 20px;
+  margin-top: 0;
   display: flex;
   align-items: center;
 
@@ -341,8 +347,8 @@
     align-items: flex-end;
     justify-content: space-between;
     transition: all ease 0.3s;
-    transform: scale(0.9) translateY(5px);
-    margin: 0 10px;
+    margin: 8px 10px 0;
+    min-height: 24px;
     opacity: 0;
     pointer-events: none;
 
@@ -373,13 +379,14 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  margin-bottom: 24px;
 
   &:hover {
     .chat-message-edit {
       opacity: 0.9;
     }
 
-    .chat-message-actions {
+    &:not(.chat-message-user) .chat-message-actions {
       opacity: 1;
       pointer-events: all;
       transform: scale(1) translateY(0);
@@ -389,6 +396,17 @@
 
 .chat-message-user > .chat-message-container {
   align-items: flex-end;
+
+  .chat-message-actions {
+    opacity: 0;
+    transform: scale(0.9) translateY(5px);
+    transition: all ease 0.3s;
+  }
+
+  &:hover .chat-message-actions {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .chat-message-avatar {
