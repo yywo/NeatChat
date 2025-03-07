@@ -40,11 +40,12 @@ main分支的使命在于优化UI和新增功能，以至于后面脱离NextChat
 
 这么做是为了打包多平台有更兼容的版本号，免去一些不必要的麻烦。
 # 赞助
-本项目不求赞助，如果有可能的话，可以支持我一些硅基流动赠金，我会更好的支持硅基系列模型，或者日后考虑开设公益站给有需要的人使用，欢迎各位佬友赞助。
+本项目不求赞助，如果有可能的话，可以支持我一些硅基流动或者火山引擎赠金，我会更好的支持相关系列模型，或者日后考虑开设公益站给有需要的人使用，欢迎各位佬友赞助。
 
-我的硅基流动邀请链接或者二维码：https://cloud.siliconflow.cn/i/tX3hT0Ly
+我的硅基流动邀请链接：https://cloud.siliconflow.cn/i/tX3hT0Ly
 
-![](https://raw.githubusercontent.com/tianzhentech/static/main/images/share_sf-%5Bobject%20Object%5D.png)
+
+我的火山引擎邀请链接：https://volcengine.com/L/i5QyNFSX
 
 
 <a>
