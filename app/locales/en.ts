@@ -509,6 +509,7 @@ const en: LocaleType = {
           'Match keyword will be used to identify model categories, e.g. "gpt" will match all models containing "gpt"',
         ExistingCategories: "Existing Custom Categories",
         NoCustomCategories: "No custom categories yet",
+        InputPlaceholderEnter: "Enter custom model name and press Enter to add",
       },
       Google: {
         ApiKey: {
