@@ -503,7 +503,7 @@ const cn = {
         Title: "自定义模型名",
         SubTitle: "增加自定义模型可选项，使用英文逗号隔开",
         ModelSelector: "选择模型",
-        FetchModels: "获取模型列表",
+        FetchModels: "加载模型列表",
         FetchSuccessFromClient: (count: number) =>
           `成功从客户端配置获取到 ${count} 个模型`,
         FetchSuccessFromServer: (count: number) =>
@@ -515,7 +515,7 @@ const cn = {
         ApiKeyRequired: "请先设置API密钥",
         InvalidResponse: "无效的响应格式",
         RequestFailed: (status: number) => `请求失败: ${status}`,
-        InputPlaceholder: "输入自定义模型名称并点击添加",
+        InputPlaceholder: "输入自定义模型名称并按回车添加",
         SelectAll: "全选",
         SelectNone: "全不选",
         ModelExists: "模型已存在",
@@ -527,6 +527,7 @@ const cn = {
           '匹配关键词将用于识别模型类别，例如"gpt"将匹配所有包含"gpt"的模型',
         ExistingCategories: "现有自定义类别",
         NoCustomCategories: "暂无自定义类别",
+        InputPlaceholderEnter: "输入自定义模型名称并按回车添加",
       },
     },
 

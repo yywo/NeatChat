@@ -485,7 +485,7 @@ const en: LocaleType = {
         Title: "Custom Models",
         SubTitle: "Custom model options, seperated by comma",
         ModelSelector: "Select Models",
-        FetchModels: "Fetch Models",
+        FetchModels: "Load Models",
         FetchSuccessFromClient: (count: number) =>
           `Successfully fetched ${count} models from client configuration`,
         FetchSuccessFromServer: (count: number) =>
@@ -497,7 +497,7 @@ const en: LocaleType = {
         ApiKeyRequired: "Please set API key first",
         InvalidResponse: "Invalid response format",
         RequestFailed: (status: number) => `Request failed: ${status}`,
-        InputPlaceholder: "Enter custom model name and click to add",
+        InputPlaceholder: "Enter custom model name and press Enter to add",
         SelectAll: "Select All",
         SelectNone: "Select None",
         ModelExists: "Model already exists",
