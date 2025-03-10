@@ -177,7 +177,14 @@ export function Modal(props: {
   );
 }
 
-export function showModal(props: ModalProps) {
+export function showModal(props: {
+  title: string | JSX.Element;
+  children?: any;
+  actions?: JSX.Element[];
+  defaultMax?: boolean;
+  footer?: React.ReactNode;
+  onClose?: () => void;
+}) {
   const div = document.createElement("div");
   div.className = "modal-mask";
   document.body.appendChild(div);
