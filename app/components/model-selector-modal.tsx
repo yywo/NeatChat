@@ -456,30 +456,19 @@ export function ModelSelectorModal(props: {
     fetchModels(false); // 传入false表示优先从本地加载
   }, [accessStore.useCustomConfig]);
 
-  const toggleModelSelection = (index: number) => {
-    // 获取当前显示的模型列表（考虑搜索过滤）
-    const visibleModels = models.filter(
-      (model) =>
-        model.id.toLowerCase().includes(searchKeyword.toLowerCase()) &&
-        (selectedCategory === "all" ||
-          getModelCategory(model.id) === selectedCategory),
-    );
+  const toggleModelSelection = (originalIndex: number) => {
+    const updatedModels = [...models];
+    updatedModels[originalIndex] = {
+      ...updatedModels[originalIndex],
+      selected: !updatedModels[originalIndex].selected,
+    };
+    setModels(updatedModels);
 
-    // 获取要切换选中状态的模型
-    const modelToToggle = visibleModels[index];
-
-    if (!modelToToggle) return;
-
-    // 在完整模型列表中找到对应的索引
-    const originalIndex = models.findIndex((m) => m.id === modelToToggle.id);
-
-    if (originalIndex >= 0) {
-      const newModels = [...models];
-      newModels[originalIndex] = {
-        ...newModels[originalIndex],
-        selected: !newModels[originalIndex].selected,
-      };
-      setModels(newModels);
+    // 更新本地存储
+    try {
+      localStorage.setItem(MODELS_STORAGE_KEY, JSON.stringify(updatedModels));
+    } catch (error) {
+      console.error("更新本地存储失败:", error);
     }
   };
 
