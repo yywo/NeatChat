@@ -16,11 +16,17 @@ import {
   SYSTEM_CATEGORIES_STORAGE_KEY,
 } from "./emoji";
 import styles from "./model-selector-modal.module.scss";
+import { ModelTestButton } from "./model-test-button";
+import { ModelTestResult } from "../utils/model-test";
 
 interface ModelInfo {
   id: string;
   selected: boolean;
   isCustom?: boolean;
+  tested?: boolean;
+  available?: boolean;
+  responseTime?: number;
+  timeout?: boolean;
 }
 
 export function ModelSelectorModal(props: {
@@ -166,72 +172,43 @@ export function ModelSelectorModal(props: {
 
   // 修改初始化函数，确保加载自定义模型
   const fetchModels = async (forceRefresh = false) => {
-    // 检查用户是否已输入访问密码
-    if (!accessStore.isAuthorized()) {
-      showToast(Locale.Settings.Access.CustomModel.AuthRequired);
-      setLoading(false);
-      return;
-    }
-
-    // 获取自定义模型列表
-    const customModelIds = currentModelList.filter((id) => id !== "-all");
-
-    // 如果不是强制刷新，先尝试从本地存储中获取
-    if (!forceRefresh) {
-      try {
-        const storedModels = localStorage.getItem(MODELS_STORAGE_KEY);
-        if (storedModels) {
-          const parsedModels = JSON.parse(storedModels);
-
-          // 确保模型列表格式正确
-          if (Array.isArray(parsedModels) && parsedModels.length > 0) {
-            // 获取已存储的模型ID列表
-            const storedModelIds = parsedModels.map((model) => model.id);
-
-            // 找出自定义模型名中有但不在存储列表中的模型
-            const missingCustomModels = customModelIds
-              .filter((id) => !storedModelIds.includes(id))
-              .map((id) => ({
-                id,
-                selected: true,
-                isCustom: true,
-              }));
-
-            // 更新选中状态并添加缺失的自定义模型
-            const modelsWithSelectedStatus = parsedModels.map((model) => ({
-              ...model,
-              selected: currentModelList.includes(model.id),
-            }));
-
-            // 合并存储的模型和缺失的自定义模型
-            const allModels = [
-              ...modelsWithSelectedStatus,
-              ...missingCustomModels,
-            ];
-
-            setModels(allModels);
-            console.log("从本地存储加载了模型列表，并添加了自定义模型");
-
-            // 如果有新添加的自定义模型，更新本地存储
-            if (missingCustomModels.length > 0) {
-              localStorage.setItem(
-                MODELS_STORAGE_KEY,
-                JSON.stringify(allModels),
-              );
-            }
-
-            return;
-          }
-        }
-      } catch (error) {
-        console.error("从本地存储加载模型列表失败:", error);
-      }
-    }
-
-    // 没有本地存储或需要强制刷新时，从远程获取
     setLoading(true);
+
     try {
-      // 先从服务端获取配置
+      // 尝试从本地存储加载模型列表
+      const storedModels = localStorage.getItem(MODELS_STORAGE_KEY);
+
+      if (storedModels && !forceRefresh) {
+        // 如果有本地存储的模型列表且不是强制刷新，则使用本地存储的数据
+        const parsedModels = JSON.parse(storedModels);
+
+        // 确保保留测试结果相关字段
+        const modelsWithTestResults = parsedModels.map((model: ModelInfo) => ({
+          ...model,
+          selected: currentModelList.includes(model.id),
+          // 保留测试相关字段
+          tested: model.tested || false,
+          available: model.available,
+          responseTime: model.responseTime,
+          timeout: model.timeout,
+        }));
+
+        setModels(modelsWithTestResults);
+        setLoading(false);
+        return;
+      }
+
+      // 检查用户是否已输入访问密码
+      if (!accessStore.isAuthorized()) {
+        showToast(Locale.Settings.Access.CustomModel.AuthRequired);
+        setLoading(false);
+        return;
+      }
+
+      // 获取自定义模型列表
+      const customModelIds = currentModelList.filter((id) => id !== "-all");
+
+      // 从远程获取
       const configResponse = await fetch("/api/config");
       const configData = await configResponse.json();
 
@@ -683,6 +660,18 @@ export function ModelSelectorModal(props: {
     );
   }, [models, searchKeyword, selectedCategory, getModelCategory]);
 
+  // 根据响应时间返回样式类
+  const getResponseTimeClass = (responseTime: number) => {
+    const seconds = responseTime / 1000;
+    if (seconds <= 2) {
+      return `${styles.modelResponseTime} ${styles.responseTimeFast}`;
+    } else if (seconds <= 5) {
+      return `${styles.modelResponseTime} ${styles.responseTimeMedium}`;
+    } else {
+      return `${styles.modelResponseTime} ${styles.responseTimeSlow}`;
+    }
+  };
+
   return (
     <div className="modal-mask">
       <Modal
@@ -739,6 +728,39 @@ export function ModelSelectorModal(props: {
         }
         onClose={props.onClose}
         actions={[
+          <ModelTestButton
+            key="test-models"
+            models={filteredModels.map((m) => m.id)}
+            onTestComplete={(results: Record<string, ModelTestResult>) => {
+              // 更新模型列表，标记测试结果
+              const updatedModels = models.map((model) => {
+                const result = results[model.id];
+                if (result) {
+                  return {
+                    ...model,
+                    tested: true,
+                    available: result.success,
+                    responseTime: result.responseTime || 0,
+                    timeout: result.timeout || false,
+                  };
+                }
+                return model;
+              });
+
+              setModels(updatedModels);
+
+              // 保存到本地存储
+              try {
+                localStorage.setItem(
+                  MODELS_STORAGE_KEY,
+                  JSON.stringify(updatedModels),
+                );
+              } catch (error) {
+                console.error("更新本地存储失败:", error);
+              }
+            }}
+          />,
+          <div key="spacer" style={{ flex: 1 }}></div>,
           <IconButton
             key="refresh-models"
             icon={<ResetIcon />}
@@ -797,6 +819,11 @@ export function ModelSelectorModal(props: {
                     title=""
                     icon={avatarId}
                     onClick={undefined}
+                    className={
+                      model.tested && !model.available
+                        ? styles.modelUnavailable
+                        : ""
+                    }
                   >
                     {model.isCustom && isEditing ? (
                       <div className={styles.modelSelectorEditForm}>
@@ -852,10 +879,38 @@ export function ModelSelectorModal(props: {
                         </div>
                       </div>
                     ) : (
-                      <div style={{ flex: 1 }}>
+                      <div
+                        style={{
+                          flex: 1,
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
                         <span className={styles.modelSelectorModelName}>
                           {model.id}
                         </span>
+                        {model.tested && (
+                          <span
+                            className={
+                              styles.modelResponseTime +
+                              " " +
+                              (model.available
+                                ? getResponseTimeClass(model.responseTime || 0)
+                                : model.timeout
+                                ? styles.modelTimeout
+                                : styles.modelUnavailable)
+                            }
+                          >
+                            {model.available
+                              ? `${((model.responseTime || 0) / 1000).toFixed(
+                                  2,
+                                )}s`
+                              : model.timeout
+                              ? "超时"
+                              : "失败"}
+                          </span>
+                        )}
                       </div>
                     )}
 

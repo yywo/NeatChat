@@ -530,6 +530,16 @@ const en: LocaleType = {
         MatchPrefix: "Match",
         ModelCategory: "Model Category",
         ModelCategoryOther: "Other",
+        TestModel: "Test Models",
+        Testing: "Testing...",
+        TestStart: "Starting to test {0} models...",
+        TestSuccess: "{0}: Test successful ({1}ms)",
+        TestFailed: "{0}: Test failed",
+        TestComplete: "Test complete: {0}/{1} models available",
+        TestError: "Test error: {0}",
+        SelectModelsToTest: "Please select models to test first",
+        Unavailable: "Unavailable",
+        NoModelsToTest: "No models to test currently",
       },
       Google: {
         ApiKey: {

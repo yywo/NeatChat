@@ -164,4 +164,36 @@
       width: 100%; // 让控制区域占据全部宽度
     }
   }
+}
+
+.modelResponseTime {
+  font-size: 12px;
+  color: var(--black);
+  opacity: 0.7;
+  margin-right: 10px;
+}
+
+.responseTimeFast {
+  color: #52c41a; // 绿色
+  font-weight: bold;
+}
+
+.responseTimeMedium {
+  color: #faad14; // 黄色
+  font-weight: bold;
+}
+
+.responseTimeSlow {
+  color: #ff7875; // 红色
+  font-weight: bold;
+}
+
+.modelTimeout {
+  color: #ff4d4f; // 红色
+  font-weight: bold;
+}
+
+.modelUnavailable {
+  opacity: 0.5;
+  background-color: var(--second);
 } 
