@@ -100,11 +100,14 @@ export async function testModels(
   apiKey: string,
   baseUrl: string = "https://api.openai.com",
   timeoutSeconds: number = 5,
+  showStartToast: boolean = true,
 ): Promise<Record<string, ModelTestResult>> {
   const results: Record<string, ModelTestResult> = {};
 
-  // 显示开始测试的提示
-  showToast(`开始测试 ${models.length} 个模型...`);
+  // 仅在showStartToast为true时显示开始测试的提示
+  if (showStartToast) {
+    showToast(`开始测试 ${models.length} 个模型...`);
+  }
 
   // 逐个测试模型
   for (const model of models) {

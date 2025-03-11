@@ -3,7 +3,6 @@ import { IconButton } from "./button";
 import { testModels, ModelTestResult } from "../utils/model-test";
 import { useAccessStore } from "../store";
 import { showToast } from "./ui-lib";
-import TestIcon from "../icons/test.svg"; // 您需要添加一个测试图标
 import Locale from "../locales";
 
 export function ModelTestButton(props: {
@@ -86,8 +85,8 @@ export function ModelTestButton(props: {
         <option value="10">10秒</option>
       </select>
       <IconButton
-        icon={<TestIcon />}
-        text={testing ? "测试中..." : "批量测试"}
+        icon={undefined}
+        text={testing ? "测试中..." : "全部测试"}
         onClick={handleTest}
         bordered
         disabled={testing}

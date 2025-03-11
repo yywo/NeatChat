@@ -17,7 +17,7 @@ import {
 } from "./emoji";
 import styles from "./model-selector-modal.module.scss";
 import { ModelTestButton } from "./model-test-button";
-import { ModelTestResult } from "../utils/model-test";
+import { ModelTestResult, testModels } from "../utils/model-test";
 
 interface ModelInfo {
   id: string;
@@ -672,6 +672,59 @@ export function ModelSelectorModal(props: {
     }
   };
 
+  // 修改单独测试模型的函数
+  const testSingleModel = async (modelId: string) => {
+    // 检查是否有API密钥
+    if (!accessStore.openaiApiKey) {
+      showToast(Locale.Settings.Access.CustomModel.ApiKeyRequired);
+      return;
+    }
+
+    showToast(`开始测试模型: ${modelId}...`);
+
+    try {
+      // 获取API基础URL
+      const baseUrl = accessStore.openaiUrl || "https://api.openai.com";
+
+      // 测试模型，传入false以禁止显示开始测试的提示
+      const result = await testModels(
+        [modelId],
+        accessStore.openaiApiKey,
+        baseUrl,
+        5, // 默认超时时间
+        false, // 不显示开始测试的提示，避免重复
+      );
+
+      // 更新模型列表
+      const updatedModels = models.map((model) => {
+        if (model.id === modelId && result[modelId]) {
+          return {
+            ...model,
+            tested: true,
+            available: result[modelId].success,
+            responseTime: result[modelId].responseTime || 0,
+            timeout: result[modelId].timeout || false,
+          };
+        }
+        return model;
+      });
+
+      setModels(updatedModels);
+
+      // 保存到本地存储
+      try {
+        localStorage.setItem(MODELS_STORAGE_KEY, JSON.stringify(updatedModels));
+      } catch (error) {
+        console.error("更新本地存储失败:", error);
+      }
+    } catch (error) {
+      console.error("测试模型时出错:", error);
+      showToast(
+        `测试出错: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+  };
+
   return (
     <div className="modal-mask">
       <Modal
@@ -901,6 +954,12 @@ export function ModelSelectorModal(props: {
                                 ? styles.modelTimeout
                                 : styles.modelUnavailable)
                             }
+                            onClick={(e) => {
+                              e.stopPropagation(); // 阻止事件冒泡
+                              testSingleModel(model.id);
+                            }}
+                            style={{ cursor: "pointer" }}
+                            title="点击重新测试此模型"
                           >
                             {model.available
                               ? `${((model.responseTime || 0) / 1000).toFixed(
