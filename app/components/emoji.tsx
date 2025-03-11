@@ -22,11 +22,63 @@ import QwenIcon from "../icons/qwen-color.svg";
 import OpenAIIcon from "../icons/openai.svg";
 import WenXinIcon from "../icons/wenxin-color.svg";
 import NeatIcon from "../icons/neat.svg";
+import MistralIcon from "../icons/mistral-color.svg";
+import YiIcon from "../icons/yi-color.svg";
+import SenseNovaIcon from "../icons/sensenova-color.svg";
+import SparkIcon from "../icons/spark-color.svg";
+import MiniMaxIcon from "../icons/minimax-color.svg";
+import HaiLuoIcon from "../icons/hailuo-color.svg";
+import GemmaIcon from "../icons/gemma-color.svg";
+import StepFunIcon from "../icons/stepfun-color.svg";
+import OllamaIcon from "../icons/ollama.svg";
+import ComfyUIIcon from "../icons/comfyui-color.svg";
+import VolcEngineIcon from "../icons/volcengine-color.svg";
+import VertexAIIcon from "../icons/vertexai-color.svg";
+import SiliconCloudIcon from "../icons/siliconcloud-color.svg";
+import PerplexityIcon from "../icons/perplexity-color.svg";
+import StabilityIcon from "../icons/stability-color.svg";
+import FluxIcon from "../icons/flux.svg";
 
 import "../styles/model-avatar.scss";
 
+// 导出图标，让其他组件可以使用
+export {
+  ClaudeIcon,
+  DallEIcon,
+  GeminiIcon,
+  DouBaoIcon,
+  HunYuanIcon,
+  MetaIcon,
+  CohereIcon,
+  DeepseekIcon,
+  MoonShotIcon,
+  GlmIcon,
+  GrokIcon,
+  Gpt35Icon,
+  QwenIcon,
+  OpenAIIcon,
+  WenXinIcon,
+  NeatIcon,
+  MistralIcon,
+  YiIcon,
+  SenseNovaIcon,
+  SparkIcon,
+  MiniMaxIcon,
+  HaiLuoIcon,
+  GemmaIcon,
+  StepFunIcon,
+  OllamaIcon,
+  ComfyUIIcon,
+  VolcEngineIcon,
+  VertexAIIcon,
+  SiliconCloudIcon,
+  PerplexityIcon,
+  StabilityIcon,
+  FluxIcon,
+};
+
 // 添加默认系统类别匹配规则常量
-const DEFAULT_SYSTEM_CATEGORY_PATTERNS: Record<string, string> = {
+export const DEFAULT_SYSTEM_CATEGORY_PATTERNS: Record<string, string> = {
   Claude: "claude",
   "DALL-E": "dall",
   DeepSeek: "deepseek",
@@ -41,10 +93,26 @@ const DEFAULT_SYSTEM_CATEGORY_PATTERNS: Record<string, string> = {
   Llama: "llama",
   Qwen: "qwen|qwq|qvq",
   ChatGPT: "gpt|o1|o3",
+  Mistral: "mistral",
+  Yi: "yi",
+  SenseNova: "sensenova|sense",
+  Spark: "spark",
+  MiniMax: "minimax|abab",
+  HaiLuo: "hailuo",
+  Gemma: "gemma",
+  StepFun: "stepfun",
+  Ollama: "ollama",
+  ComfyUI: "comfyui",
+  VolcEngine: "volcengine",
+  VertexAI: "vertexai",
+  SiliconCloud: "siliconcloud",
+  Perplexity: "perplexity",
+  Stability: "stability",
+  Flux: "flux",
 };
 
-// 添加一个本地存储键，用于保存系统类别匹配规则
-const SYSTEM_CATEGORIES_STORAGE_KEY = "chat-next-web-system-categories";
+// 共享本地存储键
+export const SYSTEM_CATEGORIES_STORAGE_KEY = "chat-next-web-system-categories";
 
 // 获取模型类别的函数
 export function getModelCategory(modelId: string): string {
@@ -284,6 +352,98 @@ export function Avatar(props: {
               return (
                 <QwenIcon className="user-avatar model-avatar" alt="Qwen" />
               );
+            case "Mistral":
+              return (
+                <MistralIcon
+                  className="user-avatar model-avatar"
+                  alt="Mistral"
+                />
+              );
+            case "Yi":
+              return <YiIcon className="user-avatar model-avatar" alt="Yi" />;
+            case "SenseNova":
+              return (
+                <SenseNovaIcon
+                  className="user-avatar model-avatar"
+                  alt="SenseNova"
+                />
+              );
+            case "Spark":
+              return (
+                <SparkIcon className="user-avatar model-avatar" alt="Spark" />
+              );
+            case "MiniMax":
+              return (
+                <MiniMaxIcon
+                  className="user-avatar model-avatar"
+                  alt="MiniMax"
+                />
+              );
+            case "HaiLuo":
+              return (
+                <HaiLuoIcon className="user-avatar model-avatar" alt="HaiLuo" />
+              );
+            case "Gemma":
+              return (
+                <GemmaIcon className="user-avatar model-avatar" alt="Gemma" />
+              );
+            case "StepFun":
+              return (
+                <StepFunIcon
+                  className="user-avatar model-avatar"
+                  alt="StepFun"
+                />
+              );
+            case "Ollama":
+              return (
+                <OllamaIcon className="user-avatar model-avatar" alt="Ollama" />
+              );
+            case "ComfyUI":
+              return (
+                <ComfyUIIcon
+                  className="user-avatar model-avatar"
+                  alt="ComfyUI"
+                />
+              );
+            case "VolcEngine":
+              return (
+                <VolcEngineIcon
+                  className="user-avatar model-avatar"
+                  alt="VolcEngine"
+                />
+              );
+            case "VertexAI":
+              return (
+                <VertexAIIcon
+                  className="user-avatar model-avatar"
+                  alt="VertexAI"
+                />
+              );
+            case "SiliconCloud":
+              return (
+                <SiliconCloudIcon
+                  className="user-avatar model-avatar"
+                  alt="SiliconCloud"
+                />
+              );
+            case "Perplexity":
+              return (
+                <PerplexityIcon
+                  className="user-avatar model-avatar"
+                  alt="Perplexity"
+                />
+              );
+            case "Stability":
+              return (
+                <StabilityIcon
+                  className="user-avatar model-avatar"
+                  alt="Stability"
+                />
+              );
+            case "Flux":
+              return (
+                <FluxIcon className="user-avatar model-avatar" alt="Flux" />
+              );
             default:
               return (
                 <NeatIcon className="user-avatar model-avatar" alt="Logo" />
@@ -308,5 +468,147 @@ export function EmojiAvatar(props: { avatar: string; size?: number }) {
       size={props.size ?? 18}
       getEmojiUrl={getEmojiUrl}
     />
+  );
+}
+
+// 添加并导出获取固定类别头像的函数
+export function getFixedCategoryAvatar(category: string) {
+  // 添加一个 div 容器并应用 no-dark 类
+  return (
+    <div className="no-dark">
+      {(() => {
+        switch (category) {
+          case "Claude":
+            return (
+              <ClaudeIcon className="user-avatar model-avatar" alt="Claude" />
+            );
+          case "DALL-E":
+            return (
+              <DallEIcon className="user-avatar model-avatar" alt="DALL-E" />
+            );
+          case "WenXin":
+            return (
+              <WenXinIcon className="user-avatar model-avatar" alt="WenXin" />
+            );
+          case "DouBao":
+            return (
+              <DouBaoIcon className="user-avatar model-avatar" alt="DouBao" />
+            );
+          case "HunYuan":
+            return (
+              <HunYuanIcon className="user-avatar model-avatar" alt="HunYuan" />
+            );
+          case "Gemini":
+            return (
+              <GeminiIcon className="user-avatar model-avatar" alt="Gemini" />
+            );
+          case "Llama":
+            return <MetaIcon className="user-avatar model-avatar" alt="Meta" />;
+          case "ChatGPT":
+            return (
+              <OpenAIIcon className="user-avatar model-avatar" alt="OpenAI" />
+            );
+          case "Cohere":
+            return (
+              <CohereIcon className="user-avatar model-avatar" alt="Cohere" />
+            );
+          case "DeepSeek":
+            return <DeepseekIcon className="user-avatar model-avatar" />;
+          case "MoonShot":
+            return (
+              <MoonShotIcon
+                className="user-avatar model-avatar"
+                alt="MoonShot"
+              />
+            );
+          case "GLM":
+            return <GlmIcon className="user-avatar model-avatar" alt="GLM" />;
+          case "Grok":
+            return <GrokIcon className="user-avatar model-avatar" alt="Grok" />;
+          case "Qwen":
+            return <QwenIcon className="user-avatar model-avatar" alt="Qwen" />;
+          case "Mistral":
+            return (
+              <MistralIcon className="user-avatar model-avatar" alt="Mistral" />
+            );
+          case "Yi":
+            return <YiIcon className="user-avatar model-avatar" alt="Yi" />;
+          case "SenseNova":
+            return (
+              <SenseNovaIcon
+                className="user-avatar model-avatar"
+                alt="SenseNova"
+              />
+            );
+          case "Spark":
+            return (
+              <SparkIcon className="user-avatar model-avatar" alt="Spark" />
+            );
+          case "MiniMax":
+            return (
+              <MiniMaxIcon className="user-avatar model-avatar" alt="MiniMax" />
+            );
+          case "HaiLuo":
+            return (
+              <HaiLuoIcon className="user-avatar model-avatar" alt="HaiLuo" />
+            );
+          case "Gemma":
+            return (
+              <GemmaIcon className="user-avatar model-avatar" alt="Gemma" />
+            );
+          case "StepFun":
+            return (
+              <StepFunIcon className="user-avatar model-avatar" alt="StepFun" />
+            );
+          case "Ollama":
+            return (
+              <OllamaIcon className="user-avatar model-avatar" alt="Ollama" />
+            );
+          case "ComfyUI":
+            return (
+              <ComfyUIIcon className="user-avatar model-avatar" alt="ComfyUI" />
+            );
+          case "VolcEngine":
+            return (
+              <VolcEngineIcon
+                className="user-avatar model-avatar"
+                alt="VolcEngine"
+              />
+            );
+          case "VertexAI":
+            return (
+              <VertexAIIcon
+                className="user-avatar model-avatar"
+                alt="VertexAI"
+              />
+            );
+          case "SiliconCloud":
+            return (
+              <SiliconCloudIcon
+                className="user-avatar model-avatar"
+                alt="SiliconCloud"
+              />
+            );
+          case "Perplexity":
+            return (
+              <PerplexityIcon
+                className="user-avatar model-avatar"
+                alt="Perplexity"
+              />
+            );
+          case "Stability":
+            return (
+              <StabilityIcon
+                className="user-avatar model-avatar"
+                alt="Stability"
+              />
+            );
+          case "Flux":
+            return <FluxIcon className="user-avatar model-avatar" alt="Flux" />;
+          default:
+            return <NeatIcon className="user-avatar model-avatar" alt="Logo" />;
+        }
+      })()}
+    </div>
   );
 }
