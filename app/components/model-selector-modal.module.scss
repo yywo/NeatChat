@@ -151,4 +151,17 @@
       }
     }
   }
+}
+
+// 添加媒体查询，在移动设备上隐藏标题
+@media (max-width: 600px) {
+  .modelSelector {
+    &HeaderTitle {
+      display: none; // 在移动端隐藏标题
+    }
+    
+    &HeaderControls {
+      width: 100%; // 让控制区域占据全部宽度
+    }
+  }
 } 
