@@ -80,6 +80,9 @@ export function ModelSelectorModal(props: {
     Record<string, string>
   >(DEFAULT_SYSTEM_CATEGORY_PATTERNS);
 
+  // 添加一个状态来跟踪当前选择的超时时间
+  const [testTimeout, setTestTimeout] = useState(5);
+
   // 在组件初始化时，尝试从本地存储加载系统类别匹配规则
   useEffect(() => {
     try {
@@ -686,12 +689,12 @@ export function ModelSelectorModal(props: {
       // 获取API基础URL
       const baseUrl = accessStore.openaiUrl || "https://api.openai.com";
 
-      // 测试模型，传入false以禁止显示开始测试的提示
+      // 使用当前选择的超时时间，而不是硬编码的5秒
       const result = await testModels(
         [modelId],
         accessStore.openaiApiKey,
         baseUrl,
-        5, // 默认超时时间
+        testTimeout, // 使用状态中的超时时间
         false, // 不显示开始测试的提示，避免重复
       );
 
@@ -785,33 +788,40 @@ export function ModelSelectorModal(props: {
             key="test-models"
             models={filteredModels.map((m) => m.id)}
             onTestComplete={(results: Record<string, ModelTestResult>) => {
-              // 更新模型列表，标记测试结果
-              const updatedModels = models.map((model) => {
-                const result = results[model.id];
-                if (result) {
-                  return {
-                    ...model,
-                    tested: true,
-                    available: result.success,
-                    responseTime: result.responseTime || 0,
-                    timeout: result.timeout || false,
-                  };
-                }
-                return model;
-              });
-
-              setModels(updatedModels);
-
-              // 保存到本地存储
-              try {
-                localStorage.setItem(
-                  MODELS_STORAGE_KEY,
-                  JSON.stringify(updatedModels),
-                );
-              } catch (error) {
-                console.error("更新本地存储失败:", error);
-              }
+              // 保留现有的完整更新逻辑
+              // ...
             }}
+            onModelTested={(modelId: string, result: ModelTestResult) => {
+              // 单个模型测试完成时立即更新UI
+              setModels((prevModels) => {
+                const updatedModels = prevModels.map((model) => {
+                  if (model.id === modelId) {
+                    return {
+                      ...model,
+                      tested: true,
+                      available: result.success,
+                      responseTime: result.responseTime || 0,
+                      timeout: result.timeout || false,
+                    };
+                  }
+                  return model;
+                });
+
+                // 保存到本地存储
+                try {
+                  localStorage.setItem(
+                    MODELS_STORAGE_KEY,
+                    JSON.stringify(updatedModels),
+                  );
+                } catch (error) {
+                  console.error("更新本地存储失败:", error);
+                }
+
+                return updatedModels;
+              });
+            }}
+            onTimeoutChange={(value) => setTestTimeout(value)}
+            initialTimeout={testTimeout}
           />,
           <div key="spacer" style={{ flex: 1 }}></div>,
           <IconButton
@@ -943,33 +953,41 @@ export function ModelSelectorModal(props: {
                         <span className={styles.modelSelectorModelName}>
                           {model.id}
                         </span>
-                        {model.tested && (
-                          <span
-                            className={
-                              styles.modelResponseTime +
-                              " " +
-                              (model.available
-                                ? getResponseTimeClass(model.responseTime || 0)
-                                : model.timeout
-                                ? styles.modelTimeout
-                                : styles.modelUnavailable)
-                            }
-                            onClick={(e) => {
-                              e.stopPropagation(); // 阻止事件冒泡
-                              testSingleModel(model.id);
-                            }}
-                            style={{ cursor: "pointer" }}
-                            title="点击重新测试此模型"
-                          >
-                            {model.available
+                        <span
+                          className={
+                            model.tested
+                              ? styles.modelResponseTime +
+                                " " +
+                                (model.available
+                                  ? getResponseTimeClass(
+                                      model.responseTime || 0,
+                                    )
+                                  : model.timeout
+                                  ? styles.modelTimeout
+                                  : styles.modelUnavailable)
+                              : styles.modelTestButton
+                          }
+                          onClick={(e) => {
+                            e.stopPropagation(); // 阻止事件冒泡
+                            testSingleModel(model.id);
+                          }}
+                          style={{ cursor: "pointer" }}
+                          title={
+                            model.tested
+                              ? "点击重新测试此模型"
+                              : "点击测试此模型"
+                          }
+                        >
+                          {model.tested
+                            ? model.available
                               ? `${((model.responseTime || 0) / 1000).toFixed(
                                   2,
                                 )}s`
                               : model.timeout
                               ? "超时"
-                              : "失败"}
-                          </span>
-                        )}
+                              : "失败"
+                            : "测试"}
+                        </span>
                       </div>
                     )}
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { IconButton } from "./button";
 import { testModels, ModelTestResult } from "../utils/model-test";
 import { useAccessStore } from "../store";
@@ -8,13 +8,31 @@ import Locale from "../locales";
 export function ModelTestButton(props: {
   models: string[];
   onTestComplete?: (results: Record<string, ModelTestResult>) => void;
+  onModelTested?: (modelId: string, result: ModelTestResult) => void;
+  onTimeoutChange?: (timeout: number) => void;
+  initialTimeout?: number;
 }) {
   const [testing, setTesting] = useState(false);
-  const [timeout, setTimeout] = useState(5); // 默认超时时间为5秒
+  const [timeout, setTimeout] = useState(props.initialTimeout || 5);
   const accessStore = useAccessStore();
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    if (props.onTimeoutChange) {
+      props.onTimeoutChange(timeout);
+    }
+  }, [timeout, props.onTimeoutChange]);
 
   const handleTest = async () => {
-    if (testing) return;
+    // 如果正在测试中，则停止测试
+    if (testing) {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      setTesting(false);
+      showToast("已停止测试");
+      return;
+    }
 
     // 检查是否有API密钥
     if (!accessStore.openaiApiKey) {
@@ -23,6 +41,8 @@ export function ModelTestButton(props: {
     }
 
     setTesting(true);
+    // 创建新的 AbortController
+    abortControllerRef.current = new AbortController();
 
     try {
       // 获取要测试的模型列表
@@ -37,31 +57,49 @@ export function ModelTestButton(props: {
       // 获取API基础URL
       const baseUrl = accessStore.openaiUrl || "https://api.openai.com";
 
-      // 测试模型，传入超时时间（秒）
+      // 测试模型，传入超时时间（秒）、AbortSignal和单个模型测试回调
       const results = await testModels(
         modelsToTest,
         accessStore.openaiApiKey,
         baseUrl,
         timeout,
+        true,
+        abortControllerRef.current.signal,
+        props.onModelTested,
       );
 
       // 调用回调函数
-      if (props.onTestComplete) {
+      if (
+        props.onTestComplete &&
+        abortControllerRef.current &&
+        !abortControllerRef.current.signal.aborted
+      ) {
         props.onTestComplete(results);
       }
 
       // 显示测试完成提示
-      const successCount = Object.values(results).filter(
-        (r) => r.success,
-      ).length;
-      showToast(`测试完成: ${successCount}/${modelsToTest.length} 个模型可用`);
+      if (
+        abortControllerRef.current &&
+        !abortControllerRef.current.signal.aborted
+      ) {
+        const successCount = Object.values(results).filter(
+          (r) => r.success,
+        ).length;
+        showToast(
+          `测试完成: ${successCount}/${modelsToTest.length} 个模型可用`,
+        );
+      }
     } catch (error) {
-      console.error("测试模型时出错:", error);
-      showToast(
-        `测试出错: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      // 忽略 AbortError
+      if (error instanceof Error && error.name !== "AbortError") {
+        console.error("测试模型时出错:", error);
+        showToast(
+          `测试出错: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
     } finally {
       setTesting(false);
+      abortControllerRef.current = null;
     }
   };
 
@@ -86,10 +124,10 @@ export function ModelTestButton(props: {
       </select>
       <IconButton
         icon={undefined}
-        text={testing ? "测试中..." : "全部测试"}
+        text={testing ? "停止测试" : "全部测试"}
         onClick={handleTest}
         bordered
-        disabled={testing}
+        disabled={false}
       />
     </div>
   );

@@ -9,6 +9,7 @@ export interface ModelTestResult {
   responseTime?: number;
   error?: any;
   timeout?: boolean;
+  cancelled?: boolean;
 }
 
 // 测试模型可用性
@@ -17,16 +18,27 @@ export async function testModel(
   apiKey: string,
   baseUrl: string = "https://api.openai.com",
   timeoutSeconds: number = 5,
+  signal?: AbortSignal,
 ): Promise<ModelTestResult> {
   const startTime = Date.now();
 
   try {
     // 创建AbortController用于超时控制
     const controller = new AbortController();
+
+    // 合并外部信号和超时信号
     const timeoutId = setTimeout(
       () => controller.abort(),
       timeoutSeconds * 1000,
     );
+
+    // 如果外部信号被触发，也要中止请求
+    if (signal) {
+      signal.addEventListener("abort", () => {
+        controller.abort();
+        clearTimeout(timeoutId);
+      });
+    }
 
     // 构建请求URL
     const url = `${baseUrl}/v1/chat/completions`;
@@ -84,6 +96,18 @@ export async function testModel(
     const responseTime = Date.now() - startTime;
     const isTimeout = error.name === "AbortError";
 
+    // 如果是外部中止，则返回特殊标记
+    if (signal?.aborted) {
+      return {
+        success: false,
+        message: "测试已取消",
+        responseTime,
+        error,
+        timeout: false,
+        cancelled: true,
+      };
+    }
+
     return {
       success: false,
       message: isTimeout ? "请求超时" : `测试出错: ${error.message}`,
@@ -101,6 +125,8 @@ export async function testModels(
   baseUrl: string = "https://api.openai.com",
   timeoutSeconds: number = 5,
   showStartToast: boolean = true,
+  signal?: AbortSignal,
+  onModelTested?: (modelId: string, result: ModelTestResult) => void,
 ): Promise<Record<string, ModelTestResult>> {
   const results: Record<string, ModelTestResult> = {};
 
@@ -111,19 +137,37 @@ export async function testModels(
 
   // 逐个测试模型
   for (const model of models) {
-    results[model] = await testModel(model, apiKey, baseUrl, timeoutSeconds);
+    // 检查是否已取消
+    if (signal?.aborted) {
+      break;
+    }
+
+    results[model] = await testModel(
+      model,
+      apiKey,
+      baseUrl,
+      timeoutSeconds,
+      signal,
+    );
+
+    // 调用单个模型测试完成的回调
+    if (onModelTested && !signal?.aborted) {
+      onModelTested(model, results[model]);
+    }
 
     // 显示每个模型的测试结果
-    if (results[model].success) {
-      showToast(
-        `${model}: 测试成功 (${(
-          (results[model].responseTime || 0) / 1000
-        ).toFixed(2)}s)`,
-      );
-    } else if (results[model].timeout) {
-      showToast(`${model}: 超时`);
-    } else {
-      showToast(`${model}: 测试失败`);
+    if (!signal?.aborted) {
+      if (results[model].success) {
+        showToast(
+          `${model}: 测试成功 (${(
+            (results[model].responseTime || 0) / 1000
+          ).toFixed(2)}s)`,
+        );
+      } else if (results[model].timeout) {
+        showToast(`${model}: 超时`);
+      } else {
+        showToast(`${model}: 测试失败`);
+      }
     }
   }
 
