@@ -17,38 +17,47 @@
 NeatChat is a brand-new version based on NextChat, featuring multiple optimizations and the addition of several key functionalities.
 
 🎨 **UI Revamp**
+
 ✨ Fully adapted to the Lobe-UI design system, with refined interaction details
 🌿 Cleaner interface layout for an immersive, distraction-free chat experience
 
 🔌 **Plugin Ecosystem Expansion**
+
 🧩 Natively compatible with official plugin protocols, seamlessly integrating with the NextChat plugin ecosystem
 📦 Pre-installed plugins for drawing, calculations, search, and more, ready to use without configuration
 
 📱 **Smooth Interaction Across Devices**
+
 🔄 Deeply optimized for mobile touch controls with fluid gesture operations
 📲 Responsive layout intelligently adapts to phones, tablets, and desktops for a natural experience everywhere
 
 🌀 **Visualized Thought Chains**
+
 🧠 Supports collapsible thought chains and progressive thinking process display
 🎭 High-visualization interactions designed for complex reasoning scenarios
 
 ⚡ **Instant Setup Experience**
+
 🚀 Automatically fetches model lists from server/client APIs
 📦 Smart categorization & quick filtering to start your first conversation in 3 seconds
 
 ⚙️ **Flexible Configuration**
+
 🔗 Redesigned `CUSTOM_MODELS` variable logic for seamless server-to-client configuration
 🌐 Local-first principle while fully compatible with web user configurations
 
 🧪 **Smart Model Prober**
+
 ✅ Unique multi-protocol testing solution for one-click proxy channel availability check
 🔋 Supports server/client dual-mode health checks for clear stability insights
 
 🖼️ **Model Avatar Workshop**
+
 🎨 Localized avatar matching rule engine with support for regex deep customization
 🔄 Automatically syncs with the official model library, ensuring new models are never "headless"
 
 🚧 **Coming Soon**
+
 🌉 Native multi-channel load balancing (no need to deploy OneAPI/NewAPI)
 🏆 Building an All-in-One smart conversation hub, redefining productivity boundaries
 
