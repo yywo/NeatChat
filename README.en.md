@@ -73,7 +73,7 @@ Built on a deep refactoring of NextChat: A more elegant and powerful AI conversa
 
 ![](https://raw.githubusercontent.com/tianzhentech/static/main/images/20250312223248.png)
 
-![image-20250312225204396](C:\Users\tianzhen\AppData\Roaming\Typora\typora-user-images\image-20250312225204396.png)
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/20250312232933.png)
 
 > For more details, visit the [Demo Site](https://nc.tianz.me)
 
