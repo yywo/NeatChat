@@ -74,7 +74,7 @@
 
 ![](https://raw.githubusercontent.com/tianzhentech/static/main/images/20250312223248.png)
 
-![](https://raw.githubusercontent.com/tianzhentech/static/main/images/20250312232933.png)
+![](https://raw.githubusercontent.com/tianzhentech/static/main/images/20250313011331.png)
 
 > 更多内容请移步[演示站](https://nc.tianz.me)
 
