@@ -675,28 +675,71 @@ export function ModelSelectorModal(props: {
     }
   };
 
+  // 添加一个函数来判断是否使用服务端测试
+  const shouldUseServerTest = () => {
+    // 如果用户没有设置自定义API配置，则使用服务端测试
+    return !accessStore.useCustomConfig;
+  };
+
   // 修改单独测试模型的函数
   const testSingleModel = async (modelId: string) => {
-    // 检查是否有API密钥
-    if (!accessStore.openaiApiKey) {
-      showToast(Locale.Settings.Access.CustomModel.ApiKeyRequired);
-      return;
-    }
-
     showToast(`开始测试模型: ${modelId}...`);
 
     try {
-      // 获取API基础URL
-      const baseUrl = accessStore.openaiUrl || "https://api.openai.com";
+      let result: Record<string, ModelTestResult> = {};
 
-      // 使用当前选择的超时时间，而不是硬编码的5秒
-      const result = await testModels(
-        [modelId],
-        accessStore.openaiApiKey,
-        baseUrl,
-        testTimeout, // 使用状态中的超时时间
-        false, // 不显示开始测试的提示，避免重复
-      );
+      if (shouldUseServerTest()) {
+        // 使用服务端测试
+        const response = await fetch("/api/model-test", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            models: [modelId],
+            timeoutSeconds: testTimeout,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`服务端测试失败: ${response.status}`);
+        }
+
+        const data = await response.json();
+        result = data.results;
+
+        // 显示测试结果消息
+        if (result[modelId]) {
+          if (result[modelId].success) {
+            showToast(
+              `${modelId}: 测试成功 (${(
+                (result[modelId].responseTime || 0) / 1000
+              ).toFixed(2)}s)`,
+            );
+          } else if (result[modelId].timeout) {
+            showToast(`${modelId}: 超时`);
+          } else {
+            // 显示详细的错误消息
+            const errorMessage = result[modelId].message || "测试失败";
+            showToast(`${modelId}: ${errorMessage}`);
+          }
+        }
+      } else {
+        // 使用客户端测试
+        if (!accessStore.openaiApiKey) {
+          showToast(Locale.Settings.Access.CustomModel.ApiKeyRequired);
+          return;
+        }
+
+        const baseUrl = accessStore.openaiUrl || "https://api.openai.com";
+        result = await testModels(
+          [modelId],
+          accessStore.openaiApiKey,
+          baseUrl,
+          testTimeout,
+          false, // 不显示开始测试的提示
+        );
+      }
 
       // 更新模型列表
       const updatedModels = models.map((model) => {
@@ -791,37 +834,56 @@ export function ModelSelectorModal(props: {
               // 保留现有的完整更新逻辑
               // ...
             }}
-            onModelTested={(modelId: string, result: ModelTestResult) => {
-              // 单个模型测试完成时立即更新UI
-              setModels((prevModels) => {
-                const updatedModels = prevModels.map((model) => {
-                  if (model.id === modelId) {
-                    return {
-                      ...model,
-                      tested: true,
-                      available: result.success,
-                      responseTime: result.responseTime || 0,
-                      timeout: result.timeout || false,
-                    };
-                  }
-                  return model;
-                });
-
-                // 保存到本地存储
-                try {
-                  localStorage.setItem(
-                    MODELS_STORAGE_KEY,
-                    JSON.stringify(updatedModels),
-                  );
-                } catch (error) {
-                  console.error("更新本地存储失败:", error);
+            onModelTested={(
+              modelId: string,
+              result: ModelTestResult,
+              allResults?: Record<string, ModelTestResult>,
+            ) => {
+              // 创建更新后的模型列表，确保保留所有已测试模型的状态
+              const updatedModels = models.map((model) => {
+                // 如果是当前测试的模型，更新其状态
+                if (model.id === modelId) {
+                  return {
+                    ...model,
+                    tested: true,
+                    available: result.success,
+                    responseTime: result.responseTime || 0,
+                    timeout: result.timeout || false,
+                  };
                 }
 
-                return updatedModels;
+                // 如果提供了所有结果，并且当前模型在结果中，也更新其状态
+                if (allResults && allResults[model.id]) {
+                  const modelResult = allResults[model.id];
+                  return {
+                    ...model,
+                    tested: true,
+                    available: modelResult.success,
+                    responseTime: modelResult.responseTime || 0,
+                    timeout: modelResult.timeout || false,
+                  };
+                }
+
+                // 否则保持原状态
+                return model;
               });
+
+              // 直接设置状态
+              setModels(updatedModels);
+
+              // 保存到本地存储
+              try {
+                localStorage.setItem(
+                  MODELS_STORAGE_KEY,
+                  JSON.stringify(updatedModels),
+                );
+              } catch (error) {
+                console.error("更新本地存储失败:", error);
+              }
             }}
             onTimeoutChange={(value) => setTestTimeout(value)}
             initialTimeout={testTimeout}
+            useServerTest={!accessStore.useCustomConfig}
           />,
           <div key="spacer" style={{ flex: 1 }}></div>,
           <IconButton

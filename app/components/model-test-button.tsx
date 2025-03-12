@@ -5,12 +5,26 @@ import { useAccessStore } from "../store";
 import { showToast } from "./ui-lib";
 import Locale from "../locales";
 
+// 在组件外部定义一个sleep函数
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, ms);
+  });
+}
+
 export function ModelTestButton(props: {
   models: string[];
   onTestComplete?: (results: Record<string, ModelTestResult>) => void;
-  onModelTested?: (modelId: string, result: ModelTestResult) => void;
+  onModelTested?: (
+    modelId: string,
+    result: ModelTestResult,
+    allResults?: Record<string, ModelTestResult>,
+  ) => void;
   onTimeoutChange?: (timeout: number) => void;
   initialTimeout?: number;
+  useServerTest?: boolean;
 }) {
   const [testing, setTesting] = useState(false);
   const [timeout, setTimeout] = useState(props.initialTimeout || 5);
@@ -34,8 +48,8 @@ export function ModelTestButton(props: {
       return;
     }
 
-    // 检查是否有API密钥
-    if (!accessStore.openaiApiKey) {
+    // 只在使用客户端测试时才检查API密钥
+    if (!props.useServerTest && !accessStore.openaiApiKey) {
       showToast(Locale.Settings.Access.CustomModel.ApiKeyRequired);
       return;
     }
@@ -54,19 +68,90 @@ export function ModelTestButton(props: {
         return;
       }
 
-      // 获取API基础URL
-      const baseUrl = accessStore.openaiUrl || "https://api.openai.com";
+      let results: Record<string, ModelTestResult> = {};
 
-      // 测试模型，传入超时时间（秒）、AbortSignal和单个模型测试回调
-      const results = await testModels(
-        modelsToTest,
-        accessStore.openaiApiKey,
-        baseUrl,
-        timeout,
-        true,
-        abortControllerRef.current.signal,
-        props.onModelTested,
-      );
+      if (props.useServerTest) {
+        // 使用服务端测试
+        try {
+          // 显示开始测试的提示消息
+          showToast(`开始测试 ${modelsToTest.length} 个模型...`);
+
+          // 创建一个本地变量来跟踪最新的测试结果
+          const testResults: Record<string, ModelTestResult> = {};
+
+          // 逐个测试模型
+          for (const modelId of modelsToTest) {
+            // 检查是否已取消
+            if (abortControllerRef.current?.signal.aborted) break;
+
+            // 发送单个模型的测试请求
+            const response = await fetch("/api/model-test", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                models: [modelId],
+                timeoutSeconds: timeout,
+              }),
+              signal: abortControllerRef.current?.signal,
+            });
+
+            if (!response.ok) {
+              throw new Error(`服务端测试失败: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const result = data.results[modelId];
+
+            // 保存结果
+            results[modelId] = result;
+            testResults[modelId] = result;
+
+            // 显示测试结果消息
+            if (result) {
+              if (result.success) {
+                showToast(
+                  `${modelId}: 测试成功 (${(
+                    (result.responseTime || 0) / 1000
+                  ).toFixed(2)}s)`,
+                );
+              } else if (result.timeout) {
+                showToast(`${modelId}: 超时`);
+              } else {
+                const errorMessage = result.message || "测试失败";
+                showToast(`${modelId}: ${errorMessage}`);
+              }
+
+              // 使用函数式更新确保基于最新状态
+              if (props.onModelTested) {
+                props.onModelTested(modelId, result, testResults);
+              }
+
+              // 添加短暂延迟
+              await sleep(10);
+            }
+          }
+        } catch (error) {
+          if (error instanceof Error && error.name === "AbortError") {
+            // 忽略中止错误
+          } else {
+            throw error;
+          }
+        }
+      } else {
+        // 使用客户端测试
+        const baseUrl = accessStore.openaiUrl || "https://api.openai.com";
+        results = await testModels(
+          modelsToTest,
+          accessStore.openaiApiKey,
+          baseUrl,
+          timeout,
+          true,
+          abortControllerRef.current?.signal,
+          props.onModelTested,
+        );
+      }
 
       // 调用回调函数
       if (

@@ -126,7 +126,11 @@ export async function testModels(
   timeoutSeconds: number = 5,
   showStartToast: boolean = true,
   signal?: AbortSignal,
-  onModelTested?: (modelId: string, result: ModelTestResult) => void,
+  onModelTested?: (
+    modelId: string,
+    result: ModelTestResult,
+    allResults?: Record<string, ModelTestResult>,
+  ) => void,
 ): Promise<Record<string, ModelTestResult>> {
   const results: Record<string, ModelTestResult> = {};
 
@@ -150,9 +154,9 @@ export async function testModels(
       signal,
     );
 
-    // 调用单个模型测试完成的回调
+    // 调用单个模型测试完成的回调，传递累积的测试结果
     if (onModelTested && !signal?.aborted) {
-      onModelTested(model, results[model]);
+      onModelTested(model, results[model], { ...results });
     }
 
     // 显示每个模型的测试结果
@@ -166,8 +170,16 @@ export async function testModels(
       } else if (results[model].timeout) {
         showToast(`${model}: 超时`);
       } else {
-        showToast(`${model}: 测试失败`);
+        const errorMessage = results[model].message || "测试失败";
+        showToast(`${model}: ${errorMessage}`);
       }
+    }
+
+    // 添加短暂延迟，确保状态更新被应用
+    if (!signal?.aborted) {
+      await new Promise<void>((resolve) => {
+        setTimeout(() => resolve(), 10);
+      });
     }
   }
 
