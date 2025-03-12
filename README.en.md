@@ -12,6 +12,7 @@
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/tianzhentech/NeatChat.git)
 
 简体中文 | [English](README.en.md)
+
 Built on a deep refactoring of NextChat: A more elegant and powerful AI conversation solution
 </div>
 
