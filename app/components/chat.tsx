@@ -4,7 +4,6 @@ import React, {
   useRef,
   useEffect,
   useMemo,
-  useCallback,
   Fragment,
   RefObject,
 } from "react";
@@ -31,6 +30,7 @@ import EditIcon from "../icons/rename.svg";
 import ConfirmIcon from "../icons/confirm.svg";
 import CancelIcon from "../icons/cancel.svg";
 import ImageIcon from "../icons/image.svg";
+import FileIcon from "../icons/file.svg";
 
 import LightIcon from "../icons/light.svg";
 import DarkIcon from "../icons/dark.svg";
@@ -122,6 +122,11 @@ import { isEmpty } from "lodash-es";
 import { getModelProvider } from "../utils/model";
 import { RealtimeChat } from "@/app/components/realtime-chat";
 import clsx from "clsx";
+import {
+  FileInfo,
+  getFileIconClass,
+  uploadMultipleTextFiles,
+} from "../utils/file";
 
 const localStorage = safeLocalStorage();
 
@@ -453,6 +458,7 @@ function useScrollToBottom(
 
 export function ChatActions(props: {
   uploadImage: () => void;
+  uploadFile: () => void;
   setAttachImages: (images: string[]) => void;
   setUploading: (uploading: boolean) => void;
   showPromptModal: () => void;
@@ -460,6 +466,7 @@ export function ChatActions(props: {
   showPromptHints: () => void;
   hitBottom: boolean;
   uploading: boolean;
+  uploadingFile: boolean;
   setShowShortcutKeyModal: React.Dispatch<React.SetStateAction<boolean>>;
   setUserInput: (input: string) => void;
   setShowChatSidePanel: React.Dispatch<React.SetStateAction<boolean>>;
@@ -577,6 +584,12 @@ export function ChatActions(props: {
             icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
           />
         )}
+
+        <ChatAction
+          onClick={props.uploadFile}
+          text={"上传文件"}
+          icon={props.uploadingFile ? <LoadingButtonIcon /> : <FileIcon />}
+        />
 
         {config.enableThemeChange && (
           <ChatAction
@@ -987,6 +1000,8 @@ function _Chat() {
   const navigate = useNavigate();
   const [attachImages, setAttachImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState<FileInfo[]>([]);
 
   // prompt hints
   const promptStore = usePromptStore();
@@ -1039,6 +1054,47 @@ function _Chat() {
   // only search prompts when user input is short
   const SEARCH_TEXT_LIMIT = 30;
   const onInput = (text: string) => {
+    const MAX_TEXT_LENGTH = 3000; // 最大文本长度
+
+    // 修改输入文本处理逻辑
+    if (text.length > MAX_TEXT_LENGTH && userInput.length <= MAX_TEXT_LENGTH) {
+      // 截断过长的文本内容
+      const MAX_FILE_CONTENT_LENGTH = 100000; // 与上传文件相同的最大内容长度
+      const truncatedText =
+        text.length > MAX_FILE_CONTENT_LENGTH
+          ? text.substring(0, MAX_FILE_CONTENT_LENGTH) +
+            `\n\n[文件过大，已截断。原文件大小: ${text.length} 字符]`
+          : text;
+
+      // 将长文本转换为文件附件
+      const longTextFile: FileInfo = {
+        name: `输入文本_${new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/[T:]/g, "-")}.txt`,
+        type: "text/plain",
+        size: text.length,
+        content: truncatedText,
+        originalFile: new File([text], "输入文本.txt", { type: "text/plain" }),
+      };
+
+      // 添加到文件附件列表
+      setAttachedFiles([...attachedFiles, longTextFile]);
+
+      // 清空输入框
+      setUserInput("");
+
+      // 显示提示
+      showToast("文本过长，已自动转换为文件附件");
+
+      // 如果文本被截断，显示额外提示
+      if (text.length > MAX_FILE_CONTENT_LENGTH) {
+        showToast(`文件内容过大，已截断至 ${MAX_FILE_CONTENT_LENGTH} 字符`);
+      }
+
+      return;
+    }
+
     setUserInput(text);
     const n = text.trim().length;
 
@@ -1052,20 +1108,71 @@ function _Chat() {
   };
 
   const doSubmit = (userInput: string) => {
-    if (userInput.trim() === "" && isEmpty(attachImages)) return;
-    const matchCommand = chatCommands.match(userInput);
+    if (
+      userInput.trim() === "" &&
+      isEmpty(attachImages) &&
+      attachedFiles.length === 0
+    )
+      return;
+
+    // 检查是否有长文本需要转换为文件
+    let finalUserInput = userInput;
+    const MAX_TEXT_LENGTH = 3000; // 最大文本长度
+
+    if (userInput.length > MAX_TEXT_LENGTH) {
+      // 将长文本转换为文件附件
+      const longTextFile: FileInfo = {
+        name: "长文本.txt",
+        type: "text/plain",
+        size: userInput.length,
+        content: userInput,
+        originalFile: new File([userInput], "长文本.txt", {
+          type: "text/plain",
+        }),
+      };
+
+      // 添加到文件附件列表
+      setAttachedFiles([...attachedFiles, longTextFile]);
+
+      // 替换用户输入为提示信息
+      finalUserInput = "我发送了一个长文本文件，内容已自动转换为附件。";
+
+      // 显示提示
+      showToast("文本过长，已自动转换为文件附件");
+    }
+
+    // 如果有附加文件，将文件信息添加到用户输入
+    if (attachedFiles.length > 0) {
+      const fileInfosText = attachedFiles
+        .map(
+          (file) =>
+            `文件名: ${file.name}\n类型: ${file.type}\n大小: ${(
+              file.size / 1024
+            ).toFixed(2)} KB\n\n${file.content}`,
+        )
+        .join("\n\n---\n\n");
+
+      finalUserInput = finalUserInput
+        ? `${finalUserInput}\n\n${fileInfosText}`
+        : fileInfosText;
+    }
+
+    const matchCommand = chatCommands.match(finalUserInput);
     if (matchCommand.matched) {
       setUserInput("");
       setPromptHints([]);
       matchCommand.invoke();
       return;
     }
+
     setIsLoading(true);
     chatStore
-      .onUserInput(userInput, attachImages)
+      .onUserInput(finalUserInput, attachImages)
       .then(() => setIsLoading(false));
+
     setAttachImages([]);
-    chatStore.setLastInput(userInput);
+    setAttachedFiles([]); // 清除附加文件
+    chatStore.setLastInput(finalUserInput);
     setUserInput("");
     setPromptHints([]);
     if (!isMobileScreen) inputRef.current?.focus();
@@ -1455,84 +1562,79 @@ function _Chat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePaste = useCallback(
-    async (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
-      const currentModel = chatStore.currentSession().mask.modelConfig.model;
-      if (!isVisionModel(currentModel)) {
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    if (e.clipboardData && e.clipboardData.files.length > 0) {
+      // 处理图片粘贴
+      const imageFile = Array.from(e.clipboardData.files).find((file) =>
+        file.type.startsWith("image/"),
+      );
+      if (imageFile) {
+        e.preventDefault();
+        uploadImage(imageFile);
         return;
       }
-      const items = (event.clipboardData || window.clipboardData).items;
-      for (const item of items) {
-        if (item.kind === "file" && item.type.startsWith("image/")) {
-          event.preventDefault();
-          const file = item.getAsFile();
-          if (file) {
-            const images: string[] = [];
-            images.push(...attachImages);
-            images.push(
-              ...(await new Promise<string[]>((res, rej) => {
-                setUploading(true);
-                const imagesData: string[] = [];
-                uploadImageRemote(file)
-                  .then((dataUrl) => {
-                    imagesData.push(dataUrl);
-                    setUploading(false);
-                    res(imagesData);
-                  })
-                  .catch((e) => {
-                    setUploading(false);
-                    rej(e);
-                  });
-              })),
-            );
-            const imagesLength = images.length;
+    }
 
-            if (imagesLength > 3) {
-              images.splice(3, imagesLength - 3);
-            }
-            setAttachImages(images);
-          }
-        }
+    // 处理文本粘贴
+    const pastedText = e.clipboardData.getData("text");
+    const MAX_TEXT_LENGTH = 3000; // 最大文本长度
+    const MAX_FILE_CONTENT_LENGTH = 100000; // 与上传文件相同的最大内容长度
+
+    if (pastedText && pastedText.length > MAX_TEXT_LENGTH) {
+      e.preventDefault(); // 阻止默认粘贴行为
+
+      // 截断过长的文本内容
+      const truncatedText =
+        pastedText.length > MAX_FILE_CONTENT_LENGTH
+          ? pastedText.substring(0, MAX_FILE_CONTENT_LENGTH) +
+            `\n\n[文件过大，已截断。原文件大小: ${pastedText.length} 字符]`
+          : pastedText;
+
+      // 将长文本转换为文件附件
+      const longTextFile: FileInfo = {
+        name: `粘贴文本_${new Date()
+          .toISOString()
+          .slice(0, 19)
+          .replace(/[T:]/g, "-")}.txt`,
+        type: "text/plain",
+        size: pastedText.length,
+        content: truncatedText,
+        originalFile: new File([pastedText], "粘贴文本.txt", {
+          type: "text/plain",
+        }),
+      };
+
+      // 添加到文件附件列表
+      setAttachedFiles([...attachedFiles, longTextFile]);
+
+      // 显示提示
+      showToast("文本过长，已自动转换为文件附件");
+
+      // 如果文本被截断，显示额外提示
+      if (pastedText.length > MAX_FILE_CONTENT_LENGTH) {
+        showToast(`文件内容过大，已截断至 ${MAX_FILE_CONTENT_LENGTH} 字符`);
       }
-    },
-    [attachImages, chatStore],
-  );
+    }
+  };
 
-  async function uploadImage() {
+  async function uploadImage(file: File) {
     const images: string[] = [];
     images.push(...attachImages);
 
     images.push(
       ...(await new Promise<string[]>((res, rej) => {
-        const fileInput = document.createElement("input");
-        fileInput.type = "file";
-        fileInput.accept =
-          "image/png, image/jpeg, image/webp, image/heic, image/heif";
-        fileInput.multiple = true;
-        fileInput.onchange = (event: any) => {
-          setUploading(true);
-          const files = event.target.files;
-          const imagesData: string[] = [];
-          for (let i = 0; i < files.length; i++) {
-            const file = event.target.files[i];
-            uploadImageRemote(file)
-              .then((dataUrl) => {
-                imagesData.push(dataUrl);
-                if (
-                  imagesData.length === 3 ||
-                  imagesData.length === files.length
-                ) {
-                  setUploading(false);
-                  res(imagesData);
-                }
-              })
-              .catch((e) => {
-                setUploading(false);
-                rej(e);
-              });
-          }
-        };
-        fileInput.click();
+        setUploading(true);
+        const imagesData: string[] = [];
+        uploadImageRemote(file)
+          .then((dataUrl) => {
+            imagesData.push(dataUrl);
+            setUploading(false);
+            res(imagesData);
+          })
+          .catch((e) => {
+            setUploading(false);
+            rej(e);
+          });
       })),
     );
 
@@ -1541,6 +1643,36 @@ function _Chat() {
       images.splice(3, imagesLength - 3);
     }
     setAttachImages(images);
+  }
+
+  // 添加上传文件函数
+  async function uploadFile() {
+    uploadMultipleTextFiles(
+      // 开始上传
+      () => setUploadingFile(true),
+      // 上传成功
+      (fileInfos) => {
+        // 合并新上传的文件和已有的文件，最多保留5个
+        const updatedFiles = [...attachedFiles, ...fileInfos];
+        if (updatedFiles.length > 5) {
+          updatedFiles.splice(5, updatedFiles.length - 5);
+          showToast(`最多只能上传5个文件，已保留前5个`);
+        }
+        setAttachedFiles(updatedFiles);
+        showToast(`已上传 ${fileInfos.length} 个文件`);
+      },
+      // 上传失败
+      (error) => {
+        showToast("读取文件失败");
+      },
+      // 完成上传
+      () => setUploadingFile(false),
+    );
+  }
+
+  // 添加删除单个文件函数
+  function deleteAttachedFile(index: number) {
+    setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
   }
 
   // 快捷键 shortcut keys
@@ -1637,6 +1769,24 @@ function _Chat() {
     setTouchStartX(0);
     setTouchEndX(0);
   };
+
+  // 添加一个无参数的上传图片函数
+  function handleUploadImage() {
+    const fileInput = document.createElement("input");
+    fileInput.type = "file";
+    fileInput.accept =
+      "image/png, image/jpeg, image/webp, image/heic, image/heif";
+    fileInput.multiple = true;
+    fileInput.onchange = async (event: any) => {
+      const files = event.target.files;
+      if (!files || files.length === 0) return;
+
+      for (let i = 0; i < files.length; i++) {
+        await uploadImage(files[i]);
+      }
+    };
+    fileInput.click();
+  }
 
   return (
     <div
@@ -1987,13 +2137,15 @@ function _Chat() {
             />
 
             <ChatActions
-              uploadImage={uploadImage}
+              uploadImage={handleUploadImage}
+              uploadFile={uploadFile}
               setAttachImages={setAttachImages}
               setUploading={setUploading}
               showPromptModal={() => setShowPromptModal(true)}
               scrollToBottom={scrollToBottom}
               hitBottom={hitBottom}
               uploading={uploading}
+              uploadingFile={uploadingFile}
               showPromptHints={() => {
                 // Click again to close
                 if (promptHints.length > 0) {
@@ -2012,7 +2164,7 @@ function _Chat() {
             <label
               className={clsx(styles["chat-input-panel-inner"], {
                 [styles["chat-input-panel-inner-attach"]]:
-                  attachImages.length !== 0,
+                  attachImages.length !== 0 || attachedFiles.length !== 0,
               })}
               htmlFor="chat-input"
             >
@@ -2038,29 +2190,63 @@ function _Chat() {
                   fontFamily: config.fontFamily,
                 }}
               />
-              {attachImages.length != 0 && (
-                <div className={styles["attach-images"]}>
-                  {attachImages.map((image, index) => {
-                    return (
-                      <div
-                        key={index}
-                        className={styles["attach-image"]}
-                        style={{ backgroundImage: `url("${image}")` }}
-                      >
-                        <div className={styles["attach-image-mask"]}>
-                          <DeleteImageButton
-                            deleteImage={() => {
-                              setAttachImages(
-                                attachImages.filter((_, i) => i !== index),
-                              );
-                            }}
-                          />
+
+              {/* 附件容器（包含图片和文件） */}
+              {(attachImages.length > 0 || attachedFiles.length > 0) && (
+                <div className={styles["attachments-container"]}>
+                  {/* 图片附件 */}
+                  {attachImages.map((image, index) => (
+                    <div
+                      key={`img-${index}`}
+                      className={styles["attach-image"]}
+                      style={{ backgroundImage: `url("${image}")` }}
+                    >
+                      <div className={styles["attach-image-mask"]}>
+                        <DeleteImageButton
+                          deleteImage={() => {
+                            setAttachImages(
+                              attachImages.filter((_, i) => i !== index),
+                            );
+                          }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+
+                  {/* 文件附件 */}
+                  {attachedFiles.map((file, index) => (
+                    <div
+                      key={`file-${index}`}
+                      className={styles["attach-file"]}
+                    >
+                      <div className={styles["attach-file-card"]}>
+                        <div
+                          className={clsx(
+                            styles["attach-file-icon"],
+                            getFileIconClass(file.type),
+                          )}
+                        >
+                          <FileIcon />
+                        </div>
+                        <div className={styles["attach-file-info"]}>
+                          <div className={styles["attach-file-name"]}>
+                            {file.name}
+                          </div>
+                          <div className={styles["attach-file-size"]}>
+                            {(file.size / 1024).toFixed(2)} KB
+                          </div>
                         </div>
                       </div>
-                    );
-                  })}
+                      <div className={styles["attach-image-mask"]}>
+                        <DeleteImageButton
+                          deleteImage={() => deleteAttachedFile(index)}
+                        />
+                      </div>
+                    </div>
+                  ))}
                 </div>
               )}
+
               <IconButton
                 icon={<SendWhiteIcon />}
                 text={isMobileScreen ? undefined : Locale.Chat.Send}

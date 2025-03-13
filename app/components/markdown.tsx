@@ -14,7 +14,7 @@ import LoadingIcon from "../icons/three-dots.svg";
 import ReloadButtonIcon from "../icons/reload.svg";
 import React from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { showImageModal, FullScreen } from "./ui-lib";
+import { showImageModal, FullScreen, showToast } from "./ui-lib";
 import {
   ArtifactsShareButton,
   HTMLPreview,
@@ -24,6 +24,7 @@ import { useChatStore } from "../store";
 import { IconButton } from "./button";
 
 import { useAppConfig } from "../store/config";
+import { FileAttachment } from "./file-attachment";
 
 function Details(props: { children: React.ReactNode }) {
   return <details open>{props.children}</details>;
@@ -314,8 +315,66 @@ ${quotedContent}
 }
 
 function _MarkDownContent(props: { content: string }) {
+  // 检测文件附件格式
+  const detectFileAttachments = (content: string) => {
+    const fileRegex =
+      /文件名: (.+?)\n类型: (.+?)\n大小: (.+?) KB\n\n([\s\S]+?)(?=\n\n---|$)/g;
+    let match;
+    const files = [];
+
+    while ((match = fileRegex.exec(content)) !== null) {
+      files.push({
+        fileName: match[1],
+        fileType: match[2],
+        fileSize: parseFloat(match[3]) * 1024, // 转换为字节
+        content: match[4],
+      });
+    }
+
+    return files;
+  };
+
+  // 替换文件内容为文件附件组件
+  const replaceFileAttachments = (content: string) => {
+    const files = detectFileAttachments(content);
+
+    if (files.length === 0) {
+      return content;
+    }
+
+    let newContent = content;
+
+    // 使用更友好的链接文本
+    files.forEach((file, index) => {
+      // 创建一个安全的替换模式
+      const fileMarker = `文件名: ${file.fileName}\n类型: ${
+        file.fileType
+      }\n大小: ${(file.fileSize / 1024).toFixed(2)} KB\n\n`;
+      const replacement = `[📄 ${file.fileName}](file://${encodeURIComponent(
+        file.fileName,
+      )}?type=${encodeURIComponent(file.fileType)}&size=${file.fileSize})`;
+      const startIndex = newContent.indexOf(fileMarker);
+
+      if (startIndex >= 0) {
+        // 找到文件内容的结束位置
+        const contentStart = startIndex + fileMarker.length;
+        let contentEnd = newContent.indexOf("\n\n---\n\n", contentStart);
+        if (contentEnd < 0) contentEnd = newContent.length;
+
+        // 使用特殊格式的 Markdown 链接，可以被 ReactMarkdown 正确处理
+        newContent =
+          newContent.substring(0, startIndex) +
+          replacement +
+          newContent.substring(contentEnd);
+      }
+    });
+
+    return newContent;
+  };
+
   const escapedContent = useMemo(() => {
-    return tryWrapHtmlCode(formatThinkText(escapeBrackets(props.content)));
+    const processedContent = replaceFileAttachments(props.content);
+    return tryWrapHtmlCode(formatThinkText(escapeBrackets(processedContent)));
   }, [props.content]);
 
   return (
@@ -333,11 +392,65 @@ function _MarkDownContent(props: { content: string }) {
         ],
       ]}
       components={{
-        pre: PreCode,
-        code: CustomCode,
-        p: (pProps) => <p {...pProps} dir="auto" />,
+        // 添加自定义组件处理
         a: (aProps) => {
           const href = aProps.href || "";
+
+          // 处理文件附件链接
+          if (href.startsWith("file://")) {
+            try {
+              const url = new URL(href);
+              const fileName = decodeURIComponent(url.pathname.substring(2)); // 去掉 '//'
+              const fileType = url.searchParams.get("type") || "未知类型";
+              const fileSize = parseFloat(url.searchParams.get("size") || "0");
+
+              // 忽略链接文本，直接使用 FileAttachment 组件
+              return (
+                <FileAttachment
+                  fileName={fileName}
+                  fileType={fileType}
+                  fileSize={fileSize}
+                  onClick={() => {
+                    try {
+                      // 点击时显示文件内容
+                      showToast("文件内容已复制到剪贴板");
+                      // 使用更安全的方式查找文件内容
+                      const fileMarker = `文件名: ${fileName}\n类型: ${fileType}\n大小: ${(
+                        fileSize / 1024
+                      ).toFixed(2)} KB\n\n`;
+                      const startIndex = props.content.indexOf(fileMarker);
+
+                      if (startIndex >= 0) {
+                        const contentStart =
+                          props.content.indexOf("\n\n", startIndex) + 2;
+                        let contentEnd = props.content.indexOf(
+                          "\n\n---\n\n",
+                          contentStart,
+                        );
+                        if (contentEnd < 0) contentEnd = props.content.length;
+
+                        const fileContent = props.content.substring(
+                          contentStart,
+                          contentEnd,
+                        );
+                        copyToClipboard(fileContent);
+                      } else {
+                        copyToClipboard("无法找到文件内容");
+                      }
+                    } catch (error) {
+                      console.error("复制文件内容时出错:", error);
+                      showToast("复制文件内容失败");
+                    }
+                  }}
+                />
+              );
+            } catch (error) {
+              console.error("解析文件附件链接出错:", error);
+              return <span>文件附件加载失败</span>;
+            }
+          }
+
+          // 处理音频链接
           if (/\.(aac|mp3|opus|wav)$/.test(href)) {
             return (
               <figure>
@@ -345,6 +458,8 @@ function _MarkDownContent(props: { content: string }) {
               </figure>
             );
           }
+
+          // 处理视频链接
           if (/\.(3gp|3g2|webm|ogv|mpeg|mp4|avi)$/.test(href)) {
             return (
               <video controls width="99.9%">
@@ -352,10 +467,15 @@ function _MarkDownContent(props: { content: string }) {
               </video>
             );
           }
+
+          // 处理普通链接
           const isInternal = /^\/#/i.test(href);
           const target = isInternal ? "_self" : aProps.target ?? "_blank";
           return <a {...aProps} target={target} />;
         },
+        pre: PreCode,
+        code: CustomCode,
+        p: (pProps) => <p {...pProps} dir="auto" />,
         details: Details,
         summary: Summary,
       }}
