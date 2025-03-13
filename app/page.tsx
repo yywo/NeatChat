@@ -1,20 +1,12 @@
-import { Analytics } from "@vercel/analytics/react";
-
-import { Home } from "./components/home";
+import dynamic from "next/dynamic";
 
 import { getServerSideConfig } from "./config/server";
 
 const serverConfig = getServerSideConfig();
 
-export default async function App() {
-  return (
-    <>
-      <Home />
-      {serverConfig?.isVercel && (
-        <>
-          <Analytics />
-        </>
-      )}
-    </>
-  );
+// 禁用 SSR，只在客户端渲染
+const ClientHome = dynamic(() => import("./page-client"), { ssr: false });
+
+export default function Page() {
+  return <ClientHome />;
 }
