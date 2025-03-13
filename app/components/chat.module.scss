@@ -887,3 +887,48 @@
 .file-text, .file-html, .file-js, .file-css, .file-json, .file-md, .file-py, .file-csv, .file-xml, .file-document {
   color: var(--primary);
 }
+
+// 添加 Word 文件图标样式
+.file-word {
+  color: #2b579a; // Word 蓝色
+}
+
+// 添加 PowerPoint 文件图标样式
+.file-powerpoint {
+  color: #d24726; // PowerPoint 橙色
+}
+
+// 添加 PDF 文件图标样式
+.file-pdf {
+  color: #f40f02; // PDF 红色
+}
+
+// 添加 ZIP 文件图标样式
+.file-zip {
+  color: #ffc107; // ZIP 黄色
+}
+
+// 添加证书和密钥文件图标样式
+.file-csr, .file-key, .file-cert {
+  color: #28a745; // 安全绿色
+}
+
+// 添加 Excel 文件图标样式
+.file-excel {
+  color: #217346; // Excel 绿色
+}
+
+// 添加 RDP 文件图标样式
+.file-rdp {
+  color: #0078d7; // 微软蓝色
+}
+
+// 添加 SVG 文件图标样式
+.file-svg {
+  color: #ff9800; // 橙色
+}
+
+// 添加 Dockerfile 图标样式
+.file-dockerfile {
+  color: #2496ed; // Docker 蓝色
+}
