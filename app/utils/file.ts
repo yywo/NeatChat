@@ -889,22 +889,87 @@ export async function readExcelFile(file: File): Promise<string> {
 }
 
 /**
- * 上传并处理多个文本文件
+ * 图片文件处理相关函数
+ */
+
+// 从chat.tsx移动过来的上传图片函数
+export async function uploadImage(file: File): Promise<string> {
+  return new Promise<string>((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        // 获取图片尺寸
+        const width = img.width;
+        const height = img.height;
+
+        // 创建canvas来处理图片
+        const canvas = document.createElement("canvas");
+        const MAX_WIDTH = 1920;
+        const MAX_HEIGHT = 1080;
+
+        // 计算缩放比例
+        let targetWidth = width;
+        let targetHeight = height;
+        if (width > MAX_WIDTH) {
+          targetWidth = MAX_WIDTH;
+          targetHeight = (height * MAX_WIDTH) / width;
+        }
+        if (targetHeight > MAX_HEIGHT) {
+          targetHeight = MAX_HEIGHT;
+          targetWidth = (targetWidth * MAX_HEIGHT) / targetHeight;
+        }
+
+        canvas.width = targetWidth;
+        canvas.height = targetHeight;
+
+        // 绘制图片
+        const ctx = canvas.getContext("2d");
+        ctx?.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+        // 转换为dataURL
+        const dataUrl = canvas.toDataURL(file.type);
+        resolve(dataUrl);
+      };
+      img.onerror = () => {
+        reject(new Error("图片加载失败"));
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.onerror = (e) => {
+      reject(e);
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// 从chat.tsx移动过来的远程上传图片函数
+export async function uploadImageRemote(file: File): Promise<string> {
+  try {
+    return await uploadImage(file);
+  } catch (error) {
+    console.error("上传图片失败:", error);
+    throw error;
+  }
+}
+
+/**
+ * 上传附件（包括图片和文件）
  * @param onStart 开始上传时的回调
- * @param onSuccess 上传成功的回调，接收文件信息对象数组
+ * @param onSuccess 上传成功的回调，接收文件信息对象数组和图片URL数组
  * @param onError 上传失败的回调
  * @param onFinish 上传完成的回调（无论成功失败）
  */
-export function uploadMultipleTextFiles(
+export function uploadAttachments(
   onStart: () => void,
-  onSuccess: (fileInfos: FileInfo[]) => void,
+  onSuccess: (fileInfos: FileInfo[], imageUrls: string[]) => void,
   onError: (error: any) => void,
   onFinish: () => void,
 ): void {
   const fileInput = document.createElement("input");
   fileInput.type = "file";
   fileInput.accept =
-    ".txt,.md,.js,.py,.html,.css,.json,.csv,.xml,.log,.docx,.doc,.pptx,.ppt,.pdf,.sh,.bash,.zsh,.sql,.ini,.conf,.yaml,.yml,.toml,.tex,.c,.cpp,.h,.hpp,.java,.cs,.go,.rs,.php,.rb,.pl,.swift,.kt,.ts,.jsx,.tsx,.vue,.scss,.less,.bat,.ps1,.r,.m,.ipynb,.zip,.csr,.key,.pem,.crt,.cer,.xlsx,.xls,.rdp,.svg,Dockerfile";
+    "image/png, image/jpeg, image/webp, image/heic, image/heif, .txt,.md,.js,.py,.html,.css,.json,.csv,.xml,.log,.docx,.doc,.pptx,.ppt,.pdf,.sh,.bash,.zsh,.sql,.ini,.conf,.yaml,.yml,.toml,.tex,.c,.cpp,.h,.hpp,.java,.cs,.go,.rs,.php,.rb,.pl,.swift,.kt,.ts,.jsx,.tsx,.vue,.scss,.less,.bat,.ps1,.r,.m,.ipynb,.zip,.csr,.key,.pem,.crt,.cer,.xlsx,.xls,.rdp,.svg,Dockerfile";
   fileInput.multiple = true;
 
   fileInput.onchange = async (event: any) => {
@@ -917,49 +982,57 @@ export function uploadMultipleTextFiles(
     onStart();
     try {
       const fileInfos: FileInfo[] = [];
+      const imageUrls: string[] = [];
 
       for (let i = 0; i < files.length; i++) {
         const file = files[i];
         try {
-          let text = "";
-
-          // 根据文件类型选择不同的读取方法
-          if (file.name.endsWith(".docx") || file.name.endsWith(".doc")) {
-            text = await readWordFile(file);
-          } else if (
-            file.name.endsWith(".pptx") ||
-            file.name.endsWith(".ppt")
-          ) {
-            text = await readPowerPointFile(file);
-          } else if (file.name.endsWith(".pdf")) {
-            text = await readPdfFile(file);
-          } else if (file.name.endsWith(".zip")) {
-            text = await readZipFile(file);
-          } else if (
-            file.name.endsWith(".xlsx") ||
-            file.name.endsWith(".xls")
-          ) {
-            text = await readExcelFile(file);
+          // 检查是否为图片文件
+          if (file.type.startsWith("image/")) {
+            const imageUrl = await uploadImageRemote(file);
+            imageUrls.push(imageUrl);
           } else {
-            text = await readFileAsText(file);
+            // 处理文本文件
+            let text = "";
+
+            // 根据文件类型选择不同的读取方法
+            if (file.name.endsWith(".docx") || file.name.endsWith(".doc")) {
+              text = await readWordFile(file);
+            } else if (
+              file.name.endsWith(".pptx") ||
+              file.name.endsWith(".ppt")
+            ) {
+              text = await readPowerPointFile(file);
+            } else if (file.name.endsWith(".pdf")) {
+              text = await readPdfFile(file);
+            } else if (file.name.endsWith(".zip")) {
+              text = await readZipFile(file);
+            } else if (
+              file.name.endsWith(".xlsx") ||
+              file.name.endsWith(".xls")
+            ) {
+              text = await readExcelFile(file);
+            } else {
+              text = await readFileAsText(file);
+            }
+
+            // 限制文件大小，防止过大
+            const maxLength = 100000;
+            const truncatedText =
+              text.length > maxLength
+                ? text.substring(0, maxLength) +
+                  `\n\n[文件过大，已截断。原文件大小: ${text.length} 字符]`
+                : text;
+
+            // 构建文件信息对象
+            fileInfos.push({
+              name: file.name,
+              type: file.type || getFileTypeByExtension(file.name),
+              size: file.size,
+              content: truncatedText,
+              originalFile: file,
+            });
           }
-
-          // 限制文件大小，防止过大
-          const maxLength = 100000;
-          const truncatedText =
-            text.length > maxLength
-              ? text.substring(0, maxLength) +
-                `\n\n[文件过大，已截断。原文件大小: ${text.length} 字符]`
-              : text;
-
-          // 构建文件信息对象
-          fileInfos.push({
-            name: file.name,
-            type: file.type || getFileTypeByExtension(file.name),
-            size: file.size,
-            content: truncatedText,
-            originalFile: file,
-          });
         } catch (error: any) {
           console.error(`读取文件 ${file.name} 失败:`, error);
           showToast(
@@ -968,8 +1041,8 @@ export function uploadMultipleTextFiles(
         }
       }
 
-      if (fileInfos.length > 0) {
-        onSuccess(fileInfos);
+      if (fileInfos.length > 0 || imageUrls.length > 0) {
+        onSuccess(fileInfos, imageUrls);
       } else {
         onError(new Error("没有成功读取任何文件"));
       }
@@ -1258,4 +1331,26 @@ export function getFileIconClass(fileType: string): string {
     return "file-dockerfile";
 
   return "file-document";
+}
+
+/**
+ * 上传并处理多个文本文件
+ * @param onStart 开始上传时的回调
+ * @param onSuccess 上传成功的回调，接收文件信息对象数组
+ * @param onError 上传失败的回调
+ * @param onFinish 上传完成的回调（无论成功失败）
+ */
+export function uploadMultipleTextFiles(
+  onStart: () => void,
+  onSuccess: (fileInfos: FileInfo[]) => void,
+  onError: (error: any) => void,
+  onFinish: () => void,
+): void {
+  // 调用新的uploadAttachments函数，但只返回文件信息
+  uploadAttachments(
+    onStart,
+    (fileInfos, _) => onSuccess(fileInfos),
+    onError,
+    onFinish,
+  );
 }

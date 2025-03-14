@@ -29,8 +29,8 @@ import PinIcon from "../icons/pin.svg";
 import EditIcon from "../icons/rename.svg";
 import ConfirmIcon from "../icons/confirm.svg";
 import CancelIcon from "../icons/cancel.svg";
-import ImageIcon from "../icons/image.svg";
 import FileIcon from "../icons/file.svg";
+import AttachmentIcon from "../icons/attachment.svg";
 
 import LightIcon from "../icons/light.svg";
 import DarkIcon from "../icons/dark.svg";
@@ -125,7 +125,8 @@ import clsx from "clsx";
 import {
   FileInfo,
   getFileIconClass,
-  uploadMultipleTextFiles,
+  uploadAttachments,
+  readFileAsText,
 } from "../utils/file";
 
 const localStorage = safeLocalStorage();
@@ -457,8 +458,7 @@ function useScrollToBottom(
 }
 
 export function ChatActions(props: {
-  uploadImage: () => void;
-  uploadFile: () => void;
+  uploadAttachments: () => void;
   setAttachImages: (images: string[]) => void;
   setUploading: (uploading: boolean) => void;
   showPromptModal: () => void;
@@ -466,7 +466,6 @@ export function ChatActions(props: {
   showPromptHints: () => void;
   hitBottom: boolean;
   uploading: boolean;
-  uploadingFile: boolean;
   setShowShortcutKeyModal: React.Dispatch<React.SetStateAction<boolean>>;
   setUserInput: (input: string) => void;
   setShowChatSidePanel: React.Dispatch<React.SetStateAction<boolean>>;
@@ -577,18 +576,10 @@ export function ChatActions(props: {
           />
         )}
 
-        {showUploadImage && (
-          <ChatAction
-            onClick={props.uploadImage}
-            text={Locale.Chat.InputActions.UploadImage}
-            icon={props.uploading ? <LoadingButtonIcon /> : <ImageIcon />}
-          />
-        )}
-
         <ChatAction
-          onClick={props.uploadFile}
-          text={"上传文件"}
-          icon={props.uploadingFile ? <LoadingButtonIcon /> : <FileIcon />}
+          onClick={props.uploadAttachments}
+          text={"上传附件"}
+          icon={props.uploading ? <LoadingButtonIcon /> : <AttachmentIcon />}
         />
 
         {config.enableThemeChange && (
@@ -1562,57 +1553,114 @@ function _Chat() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+  const handlePaste = async (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     if (e.clipboardData && e.clipboardData.files.length > 0) {
-      // 处理图片粘贴
-      const imageFile = Array.from(e.clipboardData.files).find((file) =>
+      // 处理粘贴的文件
+      e.preventDefault();
+
+      // 检查是否为图片
+      const imageFiles = Array.from(e.clipboardData.files).filter((file) =>
         file.type.startsWith("image/"),
       );
-      if (imageFile) {
-        e.preventDefault();
-        uploadImage(imageFile);
+
+      // 处理图片文件
+      if (imageFiles.length > 0) {
+        // 检查图片数量限制
+        if (attachImages.length >= 3) {
+          showToast("最多只能上传3张图片");
+          return;
+        }
+
+        setUploading(true);
+        try {
+          for (const file of imageFiles) {
+            if (attachImages.length < 3) {
+              const dataUrl = await uploadImageRemote(file);
+              setAttachImages([...attachImages, dataUrl]);
+            } else {
+              break; // 达到3张图片限制
+            }
+          }
+        } catch (error) {
+          console.error("上传图片失败:", error);
+          showToast("上传图片失败");
+        } finally {
+          setUploading(false);
+        }
         return;
       }
-    }
 
-    // 处理文本粘贴
-    const pastedText = e.clipboardData.getData("text");
-    const MAX_TEXT_LENGTH = 3000; // 最大文本长度
-    const MAX_FILE_CONTENT_LENGTH = 100000; // 与上传文件相同的最大内容长度
+      // 处理其他类型文件
+      const textFiles = Array.from(e.clipboardData.files);
+      if (textFiles.length > 0) {
+        // 检查文件数量限制
+        if (attachedFiles.length >= 5) {
+          showToast("最多只能上传5个文件");
+          return;
+        }
 
-    if (pastedText && pastedText.length > MAX_TEXT_LENGTH) {
-      e.preventDefault(); // 阻止默认粘贴行为
+        setUploading(true);
+        try {
+          for (const file of textFiles) {
+            if (attachedFiles.length < 5) {
+              // 读取文件内容
+              const text = await readFileAsText(file);
+              const maxLength = 100000;
+              const truncatedText =
+                text.length > maxLength
+                  ? text.substring(0, maxLength) +
+                    `\n\n[文件过大，已截断。原文件大小: ${text.length} 字符]`
+                  : text;
 
-      // 截断过长的文本内容
-      const truncatedText =
-        pastedText.length > MAX_FILE_CONTENT_LENGTH
-          ? pastedText.substring(0, MAX_FILE_CONTENT_LENGTH) +
-            `\n\n[文件过大，已截断。原文件大小: ${pastedText.length} 字符]`
-          : pastedText;
+              // 添加到附件列表
+              setAttachedFiles([
+                ...attachedFiles,
+                {
+                  name: file.name || "粘贴的文件.txt",
+                  type: file.type || "text/plain",
+                  size: file.size,
+                  content: truncatedText,
+                  originalFile: file,
+                },
+              ]);
+            } else {
+              break; // 达到5个文件限制
+            }
+          }
+        } catch (error) {
+          console.error("读取文件失败:", error);
+          showToast("读取文件失败");
+        } finally {
+          setUploading(false);
+        }
+      }
+    } else {
+      // 处理粘贴的文本
+      const text = e.clipboardData.getData("text/plain");
+      if (text && text.length > 1000) {
+        // 如果文本超过1000字符
+        e.preventDefault();
 
-      // 将长文本转换为文件附件
-      const longTextFile: FileInfo = {
-        name: `粘贴文本_${new Date()
-          .toISOString()
-          .slice(0, 19)
-          .replace(/[T:]/g, "-")}.txt`,
-        type: "text/plain",
-        size: pastedText.length,
-        content: truncatedText,
-        originalFile: new File([pastedText], "粘贴文本.txt", {
-          type: "text/plain",
-        }),
-      };
+        // 检查文件数量限制
+        if (attachedFiles.length >= 5) {
+          showToast("最多只能上传5个文件");
+          return;
+        }
 
-      // 添加到文件附件列表
-      setAttachedFiles([...attachedFiles, longTextFile]);
+        // 将长文本转为文件附件
+        const file = new File([text], "粘贴的文本.txt", { type: "text/plain" });
+        setAttachedFiles([
+          ...attachedFiles,
+          {
+            name: "粘贴的文本.txt",
+            type: "text/plain",
+            size: text.length,
+            content: text,
+            originalFile: file,
+          },
+        ]);
 
-      // 显示提示
-      showToast("文本过长，已自动转换为文件附件");
-
-      // 如果文本被截断，显示额外提示
-      if (pastedText.length > MAX_FILE_CONTENT_LENGTH) {
-        showToast(`文件内容过大，已截断至 ${MAX_FILE_CONTENT_LENGTH} 字符`);
+        showToast("已将长文本转为附件");
       }
     }
   };
@@ -1645,34 +1693,66 @@ function _Chat() {
     setAttachImages(images);
   }
 
-  // 添加上传文件函数
-  async function uploadFile() {
-    uploadMultipleTextFiles(
+  // 修改上传附件的处理函数
+  async function handleUploadAttachments() {
+    // 从file.ts导入的新函数
+    uploadAttachments(
       // 开始上传
-      () => setUploadingFile(true),
+      () => {
+        setUploading(true);
+      },
       // 上传成功
-      (fileInfos) => {
-        // 合并新上传的文件和已有的文件，最多保留5个
-        const updatedFiles = [...attachedFiles, ...fileInfos];
-        if (updatedFiles.length > 5) {
-          updatedFiles.splice(5, updatedFiles.length - 5);
-          showToast(`最多只能上传5个文件，已保留前5个`);
+      (fileInfos, imageUrls) => {
+        let messages = [];
+
+        // 处理文件
+        if (fileInfos.length > 0) {
+          // 合并新上传的文件和已有的文件，最多保留5个
+          const updatedFiles = [...attachedFiles, ...fileInfos];
+          let actualFileCount = fileInfos.length;
+
+          if (updatedFiles.length > 5) {
+            actualFileCount = Math.max(0, 5 - attachedFiles.length);
+            updatedFiles.splice(5, updatedFiles.length - 5);
+            messages.push(`最多只能上传5个文件，已保留前5个`);
+          } else if (actualFileCount > 0) {
+            messages.push(`已上传 ${actualFileCount} 个文件`);
+          }
+          setAttachedFiles(updatedFiles);
         }
-        setAttachedFiles(updatedFiles);
-        showToast(`已上传 ${fileInfos.length} 个文件`);
+
+        // 处理图片
+        if (imageUrls.length > 0) {
+          const images = [...attachImages];
+          let actualImageCount = imageUrls.length;
+
+          images.push(...imageUrls);
+
+          // 最多保留3张图片
+          if (images.length > 3) {
+            actualImageCount = Math.max(0, 3 - attachImages.length);
+            images.splice(3, images.length - 3);
+            messages.push(`最多只能上传3张图片，已保留前3张`);
+          } else if (actualImageCount > 0) {
+            messages.push(`已上传 ${actualImageCount} 张图片`);
+          }
+          setAttachImages(images);
+        }
+
+        // 显示合并后的消息
+        if (messages.length > 0) {
+          showToast(messages.join("，"));
+        }
       },
       // 上传失败
       (error) => {
         showToast("读取文件失败");
       },
       // 完成上传
-      () => setUploadingFile(false),
+      () => {
+        setUploading(false);
+      },
     );
-  }
-
-  // 添加删除单个文件函数
-  function deleteAttachedFile(index: number) {
-    setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
   }
 
   // 快捷键 shortcut keys
@@ -1770,22 +1850,9 @@ function _Chat() {
     setTouchEndX(0);
   };
 
-  // 添加一个无参数的上传图片函数
-  function handleUploadImage() {
-    const fileInput = document.createElement("input");
-    fileInput.type = "file";
-    fileInput.accept =
-      "image/png, image/jpeg, image/webp, image/heic, image/heif";
-    fileInput.multiple = true;
-    fileInput.onchange = async (event: any) => {
-      const files = event.target.files;
-      if (!files || files.length === 0) return;
-
-      for (let i = 0; i < files.length; i++) {
-        await uploadImage(files[i]);
-      }
-    };
-    fileInput.click();
+  // 添加删除单个文件函数
+  function deleteAttachedFile(index: number) {
+    setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
   }
 
   return (
@@ -2137,15 +2204,13 @@ function _Chat() {
             />
 
             <ChatActions
-              uploadImage={handleUploadImage}
-              uploadFile={uploadFile}
+              uploadAttachments={handleUploadAttachments}
               setAttachImages={setAttachImages}
               setUploading={setUploading}
               showPromptModal={() => setShowPromptModal(true)}
               scrollToBottom={scrollToBottom}
               hitBottom={hitBottom}
               uploading={uploading}
-              uploadingFile={uploadingFile}
               showPromptHints={() => {
                 // Click again to close
                 if (promptHints.length > 0) {
