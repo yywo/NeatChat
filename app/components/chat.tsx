@@ -1647,6 +1647,14 @@ function _Chat() {
           return;
         }
 
+        // 截断过长的文本内容
+        const maxLength = 100000;
+        const truncatedText =
+          text.length > maxLength
+            ? text.substring(0, maxLength) +
+              `\n\n[文件过大，已截断。原文件大小: ${text.length} 字符]`
+            : text;
+
         // 将长文本转为文件附件
         const file = new File([text], "粘贴的文本.txt", { type: "text/plain" });
         setAttachedFiles([
@@ -1655,7 +1663,7 @@ function _Chat() {
             name: "粘贴的文本.txt",
             type: "text/plain",
             size: text.length,
-            content: text,
+            content: truncatedText,
             originalFile: file,
           },
         ]);
