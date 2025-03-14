@@ -278,10 +278,58 @@ function tryWrapHtmlCode(text: string) {
 }
 
 function formatThinkText(text: string): string {
-  // 检查是否以 <think> 开头但没有结束标签
+  // 创建一个函数来处理思考时间
+  const handleThinkingTime = (thinkContent: string) => {
+    // 尝试从localStorage获取开始和结束时间
+    try {
+      const thinkStartKey = `think_start_${thinkContent
+        .substring(0, 50)
+        .trim()}`;
+      const thinkEndKey = `think_end_${thinkContent.substring(0, 50).trim()}`;
+
+      // 获取开始时间
+      const startTime = localStorage.getItem(thinkStartKey);
+
+      if (startTime) {
+        // 检查是否已经有结束时间
+        let endTime = localStorage.getItem(thinkEndKey);
+
+        // 如果没有结束时间，才设置当前时间为结束时间
+        if (!endTime) {
+          endTime = Date.now().toString();
+          localStorage.setItem(thinkEndKey, endTime);
+        }
+
+        // 使用结束时间计算持续时间
+        const duration = Math.round(
+          (parseInt(endTime) - parseInt(startTime)) / 1000,
+        );
+        return duration;
+      }
+    } catch (e) {
+      console.error("处理思考时间出错:", e);
+    }
+
+    return null;
+  };
+
+  // 处理正在思考的情况（只有开始标签）
   if (text.startsWith("<think>") && !text.includes("</think>")) {
     // 获取 <think> 后的所有内容
     const thinkContent = text.slice("<think>".length);
+
+    // 保存开始时间到localStorage
+    try {
+      const thinkStartKey = `think_start_${thinkContent
+        .substring(0, 50)
+        .trim()}`;
+      if (!localStorage.getItem(thinkStartKey)) {
+        localStorage.setItem(thinkStartKey, Date.now().toString());
+      }
+    } catch (e) {
+      console.error("保存思考开始时间出错:", e);
+    }
+
     // 给每一行添加引用符号
     const quotedContent = thinkContent
       .split("\n")
@@ -296,7 +344,7 @@ ${quotedContent}
 </details>`;
   }
 
-  // 处理完整的 think 标签
+  // 处理完整的思考过程（有结束标签）
   const pattern = /^<think>([\s\S]*?)<\/think>/;
   return text.replace(pattern, (match, thinkContent) => {
     // 给每一行添加引用符号
@@ -305,8 +353,12 @@ ${quotedContent}
       .map((line: string) => (line.trim() ? `> ${line}` : ">"))
       .join("\n");
 
+    // 获取思考用时
+    const duration = handleThinkingTime(thinkContent);
+    const durationText = duration ? ` (用时 ${duration} 秒)` : "";
+
     return `<details open>
-<summary>${Locale.NewChat.Think}</summary>
+<summary>${Locale.NewChat.Think}${durationText}</summary>
 
 ${quotedContent}
 
@@ -396,6 +448,21 @@ function _MarkDownContent(props: { content: string }) {
         a: (aProps) => {
           const href = aProps.href || "";
 
+          // 检测并阻止javascript协议
+          if (href.toLowerCase().startsWith("javascript:")) {
+            // 返回没有href的链接或替换为安全的替代方案
+            return (
+              <a
+                {...aProps}
+                onClick={(e) => e.preventDefault()}
+                style={{ color: "gray", textDecoration: "line-through" }}
+                title="已阻止不安全链接"
+              >
+                {aProps.children}
+              </a>
+            );
+          }
+
           // 处理文件附件链接
           if (href.startsWith("file://")) {
             try {
@@ -468,10 +535,12 @@ function _MarkDownContent(props: { content: string }) {
             );
           }
 
-          // 处理普通链接
+          // 处理其他安全链接
           const isInternal = /^\/#/i.test(href);
           const target = isInternal ? "_self" : aProps.target ?? "_blank";
-          return <a {...aProps} target={target} />;
+          const rel = !isInternal ? "noopener noreferrer" : undefined;
+
+          return <a {...aProps} href={href} target={target} rel={rel} />;
         },
         pre: PreCode,
         code: CustomCode,
