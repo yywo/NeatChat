@@ -1314,7 +1314,10 @@ function _Chat() {
     const textContent = getMessageTextContent(userMessage);
     const images = getMessageImages(userMessage);
     chatStore.onUserInput(textContent, images).then(() => setIsLoading(false));
-    inputRef.current?.focus();
+    // 只在非移动设备上聚焦输入框
+    if (!isMobileScreen) {
+      inputRef.current?.focus();
+    }
   };
 
   const onPinMessage = (message: ChatMessage) => {
