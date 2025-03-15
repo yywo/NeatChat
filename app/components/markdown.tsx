@@ -703,6 +703,27 @@ export function Markdown(
     lastContentRef.current = props.content;
   }, [props.content, props.parentRef, autoScroll]);
 
+  // 确保在消息完成后仍能获取首字延迟
+  useEffect(() => {
+    // 当消息加载完成时，确保我们仍然能获取到首字延迟
+    if (!props.loading && props.messageId && !props.isUser) {
+      // 尝试从localStorage获取已存储的延迟
+      const storedDelay = localStorage.getItem(
+        `first_char_delay_${props.messageId}`,
+      );
+
+      if (storedDelay && tokenInfo) {
+        // 确保tokenInfo中包含首字延迟
+        if (!tokenInfo.firstCharDelay) {
+          setTokenInfo({
+            ...tokenInfo,
+            firstCharDelay: parseInt(storedDelay),
+          });
+        }
+      }
+    }
+  }, [props.loading, props.messageId, props.isUser, tokenInfo]);
+
   return (
     <div className="markdown-body-container" style={{ position: "relative" }}>
       <div
@@ -735,10 +756,16 @@ export function Markdown(
             color: "var(--color-fg-subtle)",
             opacity: 0.8,
             whiteSpace: "nowrap",
-            cursor: tokenInfo.firstCharDelay ? "pointer" : "default",
+            cursor: "pointer",
           }}
           onMouseEnter={() => tokenInfo.firstCharDelay && setIsHovering(true)}
           onMouseLeave={() => setIsHovering(false)}
+          onClick={() => {
+            // 点击时切换显示状态
+            if (tokenInfo.firstCharDelay) {
+              setIsHovering(!isHovering);
+            }
+          }}
         >
           {isHovering && tokenInfo.firstCharDelay
             ? Locale.Chat.TokenInfo.FirstDelay(tokenInfo.firstCharDelay)
