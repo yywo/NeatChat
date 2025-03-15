@@ -2058,17 +2058,6 @@ function _Chat() {
                                         });
                                       }
                                     }
-                                    chatStore.updateTargetSession(
-                                      session,
-                                      (session) => {
-                                        const m = session.mask.context
-                                          .concat(session.messages)
-                                          .find((m) => m.id === message.id);
-                                        if (m) {
-                                          m.content = newContent;
-                                        }
-                                      },
-                                    );
                                   }}
                                 ></IconButton>
                               </div>
@@ -2110,6 +2099,8 @@ function _Chat() {
                           fontFamily={fontFamily}
                           parentRef={scrollRef}
                           defaultShow={i >= messages.length - 6}
+                          isUser={isUser}
+                          messageId={message.id}
                         />
                         {getMessageImages(message).length == 1 && (
                           <img
