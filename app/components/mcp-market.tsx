@@ -34,7 +34,6 @@ import StopIcon from "../icons/pause.svg";
 import { Path } from "../constant";
 import { useChatStore } from "../store/chat";
 import Locale from "../locales";
-import { getLang } from "../locales";
 
 interface ConfigProperty {
   type: string;
@@ -353,29 +352,6 @@ export function McpMarketPage() {
     }
   };
 
-  // 在组件内添加一个辅助函数来获取本地化文本
-  const getLocalizedText = (textObj: any, defaultText: string = "") => {
-    if (!textObj) return defaultText;
-
-    // 获取当前语言
-    const lang = getLang().toLowerCase();
-
-    // 如果文本对象是字符串，直接返回
-    if (typeof textObj === "string") return textObj;
-
-    // 如果是对象，尝试获取当前语言的文本
-    if (typeof textObj === "object") {
-      // 优先使用当前语言
-      if (textObj[lang]) return textObj[lang];
-      // 回退到英文
-      if (textObj["en"]) return textObj["en"];
-      // 如果都没有，返回默认文本
-      return defaultText;
-    }
-
-    return defaultText;
-  };
-
   // Render configuration form
   const renderConfigForm = () => {
     const preset = presetServers.find((s) => s.id === editingServerId);
@@ -389,13 +365,13 @@ export function McpMarketPage() {
           const addButtonText =
             (prop as any).addButtonText || `Add ${itemLabel}`;
 
-          const description =
-            typeof prop.description === "object"
-              ? getLocalizedText(prop.description, key)
-              : prop.description || key;
-
           return (
-            <ListItem key={key} title={key} subTitle={description} vertical>
+            <ListItem
+              key={key}
+              title={key}
+              subTitle={prop.description}
+              vertical
+            >
               <div className={styles["path-list"]}>
                 {(currentValue as string[]).map(
                   (value: string, index: number) => (
@@ -437,12 +413,8 @@ export function McpMarketPage() {
           );
         } else if (prop.type === "string") {
           const currentValue = userConfig[key as keyof typeof userConfig] || "";
-          const description =
-            typeof prop.description === "object"
-              ? getLocalizedText(prop.description, key)
-              : prop.description || key;
           return (
-            <ListItem key={key} title={key} subTitle={description}>
+            <ListItem key={key} title={key} subTitle={prop.description}>
               <input
                 aria-label={key}
                 type="text"
@@ -526,12 +498,9 @@ export function McpMarketPage() {
       .filter((server) => {
         if (searchText.length === 0) return true;
         const searchLower = searchText.toLowerCase();
-        const serverName = getLocalizedText(server.name, server.id);
-        const serverDesc = getLocalizedText(server.description, "");
-
         return (
-          serverName.toLowerCase().includes(searchLower) ||
-          serverDesc.toLowerCase().includes(searchLower) ||
+          server.name.toLowerCase().includes(searchLower) ||
+          server.description.toLowerCase().includes(searchLower) ||
           server.tags.some((tag) => tag.toLowerCase().includes(searchLower))
         );
       })
@@ -590,7 +559,7 @@ export function McpMarketPage() {
           <div className={styles["mcp-market-header"]}>
             <div className={styles["mcp-market-title"]}>
               <div className={styles["mcp-market-name"]}>
-                {getLocalizedText(server.name, server.id)}
+                {server.name}
                 {loadingStates[server.id] && (
                   <span
                     className={styles["operation-status"]}
@@ -623,9 +592,9 @@ export function McpMarketPage() {
               </div>
               <div
                 className={clsx(styles["mcp-market-info"], "one-line")}
-                title={getLocalizedText(server.description, "")}
+                title={server.description}
               >
-                {getLocalizedText(server.description, "")}
+                {server.description}
               </div>
             </div>
             <div className={styles["mcp-market-actions"]}>

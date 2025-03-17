@@ -2,14 +2,8 @@
   "data": [
     {
       "id": "filesystem",
-      "name": {
-        "en": "Filesystem",
-        "cn": "文件系统"
-      },
-      "description": {
-        "en": "Secure file operations with configurable access controls",
-        "cn": "具有可配置访问控制的安全文件操作"
-      },
+      "name": "Filesystem",
+      "description": "Secure file operations with configurable access controls",
       "tags": ["filesystem", "access-control"],
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
       "command": "npx",
@@ -19,10 +13,7 @@
         "properties": {
           "paths": {
             "type": "array",
-            "description": {
-              "en": "Allowed file system paths",
-              "cn": "允许的文件系统路径"
-            },
+            "description": "Allowed file system paths",
             "required": true,
             "minItems": 1
           }
@@ -37,14 +28,8 @@
     },
     {
       "id": "github",
-      "name": {
-        "en": "GitHub",
-        "cn": "GitHub"
-      },
-      "description": {
-        "en": "Repository management, file operations, and GitHub API integration",
-        "cn": "仓库管理、文件操作和 GitHub API 集成"
-      },
+      "name": "GitHub",
+      "description": "Repository management, file operations, and GitHub API integration",
       "tags": ["github", "repository", "api"],
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/github",
       "command": "npx",
@@ -54,10 +39,7 @@
         "properties": {
           "token": {
             "type": "string",
-            "description": {
-              "en": "GitHub Personal Access Token",
-              "cn": "GitHub 个人访问令牌"
-            },
+            "description": "GitHub Personal Access Token",
             "required": true
           }
         }
@@ -71,15 +53,9 @@
     },
     {
       "id": "gdrive",
-      "name": {
-        "en": "Google Drive",
-        "cn": "谷歌云盘"
-      },
+      "name": "Google Drive",
       "tags": ["google", "filesystem", "api"],
-      "description": {
-        "en": "File access and search capabilities for Google Drive",
-        "cn": "谷歌云盘的文件访问和搜索功能"
-      },
+      "description": "File access and search capabilities for Google Drive",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive",
       "command": "npx",
       "baseArgs": ["-y", "@modelcontextprotocol/server-gdrive"],
@@ -87,14 +63,8 @@
     },
     {
       "id": "brave-search",
-      "name": {
-        "en": "Brave Search",
-        "cn": "Brave 搜索"
-      },
-      "description": {
-        "en": "Web search capabilities using Brave Search API",
-        "cn": "使用 Brave 搜索 API 的网络搜索功能"
-      },
+      "name": "Brave Search",
+      "description": "Web search capabilities using Brave Search API",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search",
       "tags": ["search", "web", "api"],
       "command": "npx",
@@ -104,10 +74,7 @@
         "properties": {
           "apiKey": {
             "type": "string",
-            "description": {
-              "en": "Brave Search API Key",
-              "cn": "Brave 搜索 API 密钥"
-            },
+            "description": "Brave Search API Key",
             "required": true
           }
         }
@@ -121,14 +88,8 @@
     },
     {
       "id": "puppeteer",
-      "name": {
-        "en": "Puppeteer",
-        "cn": "Puppeteer"
-      },
-      "description": {
-        "en": "Web browsing and scraping capabilities using headless Chrome",
-        "cn": "使用无头 Chrome 的网页浏览和抓取功能"
-      },
+      "name": "Puppeteer",
+      "description": "Web browsing and scraping capabilities using headless Chrome",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer",
       "tags": ["browser", "web", "scraping"],
       "command": "npx",
@@ -137,14 +98,8 @@
     },
     {
       "id": "fetch",
-      "name": {
-        "en": "Fetch",
-        "cn": "网页获取"
-      },
-      "description": {
-        "en": "Web content fetching capabilities, converting HTML to markdown for easier consumption",
-        "cn": "网页内容获取功能，将 HTML 转换为 Markdown 以便于阅读"
-      },
+      "name": "Fetch",
+      "description": "Web content fetching capabilities, converting HTML to markdown for easier consumption",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
       "tags": ["web", "content", "markdown"],
       "command": "uvx",
@@ -154,18 +109,12 @@
         "properties": {
           "ignoreRobotsTxt": {
             "type": "boolean",
-            "description": {
-              "en": "Ignore robots.txt restrictions",
-              "cn": "忽略 robots.txt 限制"
-            },
+            "description": "Ignore robots.txt restrictions",
             "required": false
           },
           "userAgent": {
             "type": "string",
-            "description": {
-              "en": "Custom User-Agent string",
-              "cn": "自定义 User-Agent 字符串"
-            },
+            "description": "Custom User-Agent string",
             "required": false
           }
         }
@@ -184,14 +133,8 @@
     },
     {
       "id": "everart",
-      "name": {
-        "en": "Everart",
-        "cn": "Everart"
-      },
-      "description": {
-        "en": "AI art generation and image manipulation capabilities",
-        "cn": "AI 艺术生成和图像处理功能"
-      },
+      "name": "Everart",
+      "description": "AI art generation and image manipulation capabilities",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/everart",
       "tags": ["art", "image", "generation"],
       "command": "npx",
@@ -201,10 +144,7 @@
         "properties": {
           "apiKey": {
             "type": "string",
-            "description": {
-              "en": "Everart API Key",
-              "cn": "Everart API 密钥"
-            },
+            "description": "Everart API Key",
             "required": true
           }
         }
@@ -218,14 +158,8 @@
     },
     {
       "id": "git",
-      "name": {
-        "en": "Git",
-        "cn": "Git"
-      },
-      "description": {
-        "en": "Git repository management and operations",
-        "cn": "Git 仓库管理和操作"
-      },
+      "name": "Git",
+      "description": "Git repository management and operations",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
       "tags": ["git", "repository", "version-control"],
       "command": "uv",
@@ -235,10 +169,7 @@
         "properties": {
           "directory": {
             "type": "string",
-            "description": {
-              "en": "Path to the Git repository directory",
-              "cn": "Git 仓库目录路径"
-            },
+            "description": "Path to the Git repository directory",
             "required": true
           }
         }
@@ -253,14 +184,8 @@
     },
     {
       "id": "aws-kb-retrieval",
-      "name": {
-        "en": "AWS Knowledge Base Retrieval",
-        "cn": "AWS 知识库检索"
-      },
-      "description": {
-        "en": "Retrieve information from AWS Knowledge Bases for AI assistants",
-        "cn": "从 AWS 知识库中检索 AI 助手所需的信息"
-      },
+      "name": "AWS Knowledge Base Retrieval",
+      "description": "Retrieve information from AWS Knowledge Bases for AI assistants",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/aws-kb-retrieval",
       "tags": ["aws", "knowledge-base", "retrieval"],
       "command": "npx",
@@ -270,26 +195,17 @@
         "properties": {
           "accessKeyId": {
             "type": "string",
-            "description": {
-              "en": "AWS Access Key ID",
-              "cn": "AWS 访问密钥 ID"
-            },
+            "description": "AWS Access Key ID",
             "required": true
           },
           "secretAccessKey": {
             "type": "string",
-            "description": {
-              "en": "AWS Secret Access Key",
-              "cn": "AWS 秘密访问密钥"
-            },
+            "description": "AWS Secret Access Key",
             "required": true
           },
           "region": {
             "type": "string",
-            "description": {
-              "en": "AWS Region",
-              "cn": "AWS 区域"
-            },
+            "description": "AWS Region",
             "required": true
           }
         }
@@ -311,14 +227,8 @@
     },
     {
       "id": "everything",
-      "name": {
-        "en": "Everything",
-        "cn": "Everything 搜索"
-      },
-      "description": {
-        "en": "Fast file search capabilities using Everything search engine",
-        "cn": "使用 Everything 搜索引擎的快速文件搜索功能"
-      },
+      "name": "Everything",
+      "description": "Fast file search capabilities using Everything search engine",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/everything",
       "tags": ["search", "filesystem", "windows"],
       "command": "npx",
@@ -327,14 +237,8 @@
     },
     {
       "id": "sqlite",
-      "name": {
-        "en": "SQLite",
-        "cn": "SQLite"
-      },
-      "description": {
-        "en": "SQLite database access and query capabilities",
-        "cn": "SQLite 数据库访问和查询功能"
-      },
+      "name": "SQLite",
+      "description": "SQLite database access and query capabilities",
       "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/sqlite",
       "tags": ["database", "sql", "sqlite"],
       "command": "uv",
@@ -344,18 +248,12 @@
         "properties": {
           "directory": {
             "type": "string",
-            "description": {
-              "en": "Path to the servers repository directory",
-              "cn": "服务器仓库目录路径"
-            },
+            "description": "Path to the servers repository directory",
             "required": true
           },
           "dbPath": {
             "type": "string",
-            "description": {
-              "en": "Path to the SQLite database file",
-              "cn": "SQLite 数据库文件路径"
-            },
+            "description": "Path to the SQLite database file",
             "required": true
           }
         }
