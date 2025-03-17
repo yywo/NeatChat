@@ -32,6 +32,7 @@ import clsx from "clsx";
 import PlayIcon from "../icons/play.svg";
 import StopIcon from "../icons/pause.svg";
 import { Path } from "../constant";
+import { useChatStore } from "../store/chat";
 
 interface ConfigProperty {
   type: string;
@@ -94,7 +95,7 @@ export function McpMarketPage() {
       if (!mcpEnabled) return;
       try {
         setLoadingPresets(true);
-        const response = await fetch("https://nextchat.club/mcp/list");
+        const response = await fetch("/mcp.json");
         if (!response.ok) {
           throw new Error("Failed to load preset servers");
         }
@@ -215,6 +216,8 @@ export function McpMarketPage() {
 
       const newConfig = await addMcpServer(savingServerId, serverConfig);
       setConfig(newConfig);
+      // 重置MCP缓存
+      useChatStore.getState().resetMcpCache();
       showToast("Server configuration updated successfully");
     } catch (error) {
       showToast(
@@ -265,6 +268,8 @@ export function McpMarketPage() {
         };
         const newConfig = await addMcpServer(preset.id, serverConfig);
         setConfig(newConfig);
+        // 重置MCP缓存
+        useChatStore.getState().resetMcpCache();
 
         // 更新状态
         const statuses = await getClientsStatus();
@@ -285,6 +290,8 @@ export function McpMarketPage() {
       updateLoadingState(id, "Stopping server...");
       const newConfig = await pauseMcpServer(id);
       setConfig(newConfig);
+      // 重置MCP缓存
+      useChatStore.getState().resetMcpCache();
       showToast("Server stopped successfully");
     } catch (error) {
       showToast("Failed to stop server");
@@ -299,6 +306,8 @@ export function McpMarketPage() {
     try {
       updateLoadingState(id, "Starting server...");
       await resumeMcpServer(id);
+      // 重置MCP缓存
+      useChatStore.getState().resetMcpCache();
     } catch (error) {
       showToast(
         error instanceof Error
@@ -317,6 +326,8 @@ export function McpMarketPage() {
       updateLoadingState("all", "Restarting all servers...");
       const newConfig = await restartAllClients();
       setConfig(newConfig);
+      // 重置MCP缓存
+      useChatStore.getState().resetMcpCache();
       showToast("Restarting all clients");
     } catch (error) {
       showToast("Failed to restart clients");
@@ -632,6 +643,19 @@ export function McpMarketPage() {
       ));
   };
 
+  // 修改导航返回函数
+  const handleNavigateBack = async () => {
+    // 如果有配置变更，先重置缓存
+    if (config) {
+      useChatStore.getState().resetMcpCache();
+      // 预加载MCP系统提示
+      await useChatStore.getState().initMcp();
+    }
+
+    // 然后再导航回上一页
+    navigate(-1);
+  };
+
   return (
     <ErrorBoundary>
       <div className={styles["mcp-market-page"]}>
@@ -664,7 +688,7 @@ export function McpMarketPage() {
               <IconButton
                 icon={<CloseIcon />}
                 bordered
-                onClick={() => navigate(-1)}
+                onClick={handleNavigateBack}
                 disabled={isLoading}
               />
             </div>

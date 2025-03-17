@@ -45,6 +45,7 @@ import PluginIcon from "../icons/plugin.svg";
 import ShortcutkeyIcon from "../icons/shortcutkey.svg";
 import ReloadIcon from "../icons/reload.svg";
 import HeadphoneIcon from "../icons/headphone.svg";
+import McpToolIcon from "../icons/tool.svg";
 import {
   ChatMessage,
   SubmitKey,
@@ -128,6 +129,7 @@ import {
   uploadAttachments,
   readFileAsText,
 } from "../utils/file";
+import { getAvailableClientsCount, isMcpEnabled } from "../mcp/actions";
 
 const localStorage = safeLocalStorage();
 
@@ -1865,6 +1867,33 @@ function _Chat() {
   function deleteAttachedFile(index: number) {
     setAttachedFiles(attachedFiles.filter((_, i) => i !== index));
   }
+
+  const MCPAction = () => {
+    const [count, setCount] = useState<number>(0);
+    const [mcpEnabled, setMcpEnabled] = useState(false);
+
+    useEffect(() => {
+      const checkMcpStatus = async () => {
+        const enabled = await isMcpEnabled();
+        setMcpEnabled(enabled);
+        if (enabled) {
+          const count = await getAvailableClientsCount();
+          setCount(count);
+        }
+      };
+      checkMcpStatus();
+    }, []);
+
+    if (!mcpEnabled) return null;
+
+    return (
+      <ChatAction
+        onClick={() => navigate(Path.McpMarket)}
+        text={`MCP${count ? ` (${count})` : ""}`}
+        icon={<McpToolIcon />}
+      />
+    );
+  };
 
   return (
     <div
