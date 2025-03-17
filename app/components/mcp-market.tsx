@@ -33,7 +33,7 @@ import PlayIcon from "../icons/play.svg";
 import StopIcon from "../icons/pause.svg";
 import { Path } from "../constant";
 import { useChatStore } from "../store/chat";
-import Locale from "../locales";
+import Locale, { getLang } from "../locales";
 
 interface ConfigProperty {
   type: string;
@@ -96,20 +96,10 @@ export function McpMarketPage() {
       if (!mcpEnabled) return;
       try {
         setLoadingPresets(true);
-        let response;
-        try {
-          // 首先尝试从 GitHub 仓库获取
-          response = await fetch(
-            "https://raw.githubusercontent.com/tianzhentech/NeatChat/refs/heads/main/public/mcp.json",
-          );
-        } catch (error) {
-          console.warn(
-            "Failed to fetch from GitHub, trying local path:",
-            error,
-          );
-          // 如果从 GitHub 获取失败，尝试从本地获取
-          response = await fetch("/mcp.json");
-        }
+        const lang = getLang(); // 获取当前语言
+        const localPath = lang === "cn" ? "/mcp_cn.json" : "/mcp.json";
+
+        const response = await fetch(localPath);
 
         if (!response.ok) {
           throw new Error("Failed to load preset servers");
@@ -233,7 +223,7 @@ export function McpMarketPage() {
       setConfig(newConfig);
       // 重置MCP缓存
       useChatStore.getState().resetMcpCache();
-      showToast("Server configuration updated successfully");
+      showToast(Locale.Mcp.Market.Errors.ConfigUpdateSuccess);
     } catch (error) {
       showToast(
         error instanceof Error ? error.message : "Failed to save configuration",
@@ -253,7 +243,7 @@ export function McpMarketPage() {
         throw new Error("Failed to load tools");
       }
     } catch (error) {
-      showToast("Failed to load tools");
+      showToast(Locale.Mcp.Market.Errors.ToolsLoadFailed);
       console.error(error);
       setTools(null);
     }
@@ -307,9 +297,9 @@ export function McpMarketPage() {
       setConfig(newConfig);
       // 重置MCP缓存
       useChatStore.getState().resetMcpCache();
-      showToast("Server stopped successfully");
+      showToast(Locale.Mcp.Market.Errors.StopSuccess);
     } catch (error) {
-      showToast("Failed to stop server");
+      showToast(Locale.Mcp.Market.Errors.StopFailed);
       console.error(error);
     } finally {
       updateLoadingState(id, null);
@@ -343,9 +333,9 @@ export function McpMarketPage() {
       setConfig(newConfig);
       // 重置MCP缓存
       useChatStore.getState().resetMcpCache();
-      showToast("Restarting all clients");
+      showToast(Locale.Mcp.Market.Errors.RestartSuccess);
     } catch (error) {
-      showToast("Failed to restart clients");
+      showToast(Locale.Mcp.Market.Errors.RestartFailed);
       console.error(error);
     } finally {
       updateLoadingState("all", null);
@@ -400,7 +390,10 @@ export function McpMarketPage() {
                 )}
                 <IconButton
                   icon={<AddIcon />}
-                  text={addButtonText}
+                  text={Locale.Mcp.Market.ConfigModal.AddItem.replace(
+                    "{0}",
+                    itemLabel,
+                  )}
                   className={styles["add-button"]}
                   bordered
                   onClick={() => {
@@ -419,7 +412,10 @@ export function McpMarketPage() {
                 aria-label={key}
                 type="text"
                 value={currentValue}
-                placeholder={`Enter ${key}`}
+                placeholder={Locale.Mcp.Market.ConfigModal.InputPlaceholder.replace(
+                  "{0}",
+                  key,
+                )}
                 onChange={(e) => {
                   setUserConfig({ ...userConfig, [key]: e.target.value });
                 }}

@@ -1,0 +1,275 @@
+{
+  "data": [
+    {
+      "id": "Filesystem",
+      "name": "Filesystem",
+      "description": "具有可配置访问控制的安全文件操作",
+      "tags": ["Filesystem", "AccessControl"],
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/filesystem",
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-filesystem"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "paths": {
+            "type": "array",
+            "description": "允许访问的文件系统路径",
+            "required": true,
+            "minItems": 1
+          }
+        }
+      },
+      "argsMapping": {
+        "paths": {
+          "type": "spread",
+          "position": 2
+        }
+      }
+    },
+    {
+      "id": "GitHub",
+      "name": "GitHub",
+      "description": "仓库管理、文件操作和 GitHub API 集成",
+      "tags": ["GitHub", "Repository", "API"],
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/github",
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-github"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "GitHub 个人访问令牌",
+            "required": true
+          }
+        }
+      },
+      "argsMapping": {
+        "token": {
+          "type": "env",
+          "key": "GITHUB_PERSONAL_ACCESS_TOKEN"
+        }
+      }
+    },
+    {
+      "id": "Google Drive",
+      "name": "Google Drive",
+      "tags": ["Google", "Filesystem", "API"],
+      "description": "Google 云端硬盘的文件访问和搜索功能",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/gdrive",
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-gdrive"],
+      "configurable": false
+    },
+    {
+      "id": "Brave Search",
+      "name": "Brave Search",
+      "description": "使用 Brave 搜索 API 的网络搜索功能",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/brave-search",
+      "tags": ["Search", "Web", "API"],
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-brave-search"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Brave 搜索 API 密钥",
+            "required": true
+          }
+        }
+      },
+      "argsMapping": {
+        "apiKey": {
+          "type": "env",
+          "key": "BRAVE_API_KEY"
+        }
+      }
+    },
+    {
+      "id": "Puppeteer",
+      "name": "Puppeteer",
+      "description": "使用无头 Chrome 的网页浏览和抓取功能",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/puppeteer",
+      "tags": ["Browser", "Web", "Scraping"],
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-puppeteer"],
+      "configurable": false
+    },
+    {
+      "id": "Fetch",
+      "name": "Fetch",
+      "description": "网页内容获取功能，将 HTML 转换为 Markdown 以便更容易阅读",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/fetch",
+      "tags": ["Web", "Content", "Markdown"],
+      "command": "uvx",
+      "baseArgs": ["mcp-server-fetch"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "ignoreRobotsTxt": {
+            "type": "boolean",
+            "description": "忽略 robots.txt 限制",
+            "required": false
+          },
+          "userAgent": {
+            "type": "string",
+            "description": "自定义 User-Agent 字符串",
+            "required": false
+          }
+        }
+      },
+      "argsMapping": {
+        "ignoreRobotsTxt": {
+          "type": "flag",
+          "flag": "--ignore-robots-txt",
+          "condition": true
+        },
+        "userAgent": {
+          "type": "param",
+          "param": "--user-agent"
+        }
+      }
+    },
+    {
+      "id": "Everart",
+      "name": "Everart",
+      "description": "AI 艺术生成和图像处理功能",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/everart",
+      "tags": ["Art", "Image", "Generation"],
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-everart"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Everart API 密钥",
+            "required": true
+          }
+        }
+      },
+      "argsMapping": {
+        "apiKey": {
+          "type": "env",
+          "key": "EVERART_API_KEY"
+        }
+      }
+    },
+    {
+      "id": "Git",
+      "name": "Git",
+      "description": "Git 仓库管理和操作",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/git",
+      "tags": ["Git", "Repository", "VersionControl"],
+      "command": "uv",
+      "baseArgs": ["run", "mcp-server-git"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "directory": {
+            "type": "string",
+            "description": "Git 仓库目录路径",
+            "required": true
+          }
+        }
+      },
+      "argsMapping": {
+        "directory": {
+          "type": "param",
+          "param": "--directory",
+          "position": 0
+        }
+      }
+    },
+    {
+      "id": "AWS Knowledge Base Retrieval",
+      "name": "AWS Knowledge Base Retrieval",
+      "description": "让 AI 助手从 AWS 知识库中检索信息",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/aws-kb-retrieval",
+      "tags": ["AWS", "KnowledgeBase", "Retrieval"],
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-aws-kb-retrieval"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "accessKeyId": {
+            "type": "string",
+            "description": "AWS 访问密钥 ID",
+            "required": true
+          },
+          "secretAccessKey": {
+            "type": "string",
+            "description": "AWS 秘密访问密钥",
+            "required": true
+          },
+          "region": {
+            "type": "string",
+            "description": "AWS 区域",
+            "required": true
+          }
+        }
+      },
+      "argsMapping": {
+        "accessKeyId": {
+          "type": "env",
+          "key": "AWS_ACCESS_KEY_ID"
+        },
+        "secretAccessKey": {
+          "type": "env",
+          "key": "AWS_SECRET_ACCESS_KEY"
+        },
+        "region": {
+          "type": "env",
+          "key": "AWS_REGION"
+        }
+      }
+    },
+    {
+      "id": "Everything",
+      "name": "Everything",
+      "description": "使用 Everything 搜索引擎的快速文件搜索功能",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/everything",
+      "tags": ["Search", "Filesystem", "Windows"],
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-everything"],
+      "configurable": false
+    },
+    {
+      "id": "SQLite",
+      "name": "SQLite",
+      "description": "SQLite 数据库访问和查询功能",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/sqlite",
+      "tags": ["Database", "SQL", "SQLite"],
+      "command": "uv",
+      "baseArgs": ["run", "mcp-server-sqlite"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "directory": {
+            "type": "string",
+            "description": "服务器仓库目录路径",
+            "required": true
+          },
+          "dbPath": {
+            "type": "string",
+            "description": "SQLite 数据库文件路径",
+            "required": true
+          }
+        }
+      },
+      "argsMapping": {
+        "directory": {
+          "type": "param",
+          "param": "--directory",
+          "position": 0
+        },
+        "dbPath": {
+          "type": "param",
+          "param": "--db-path",
+          "position": 3
+        }
+      }
+    }
+  ]
+} 
