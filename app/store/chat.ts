@@ -38,7 +38,12 @@ import { ModelConfig, ModelType, useAppConfig } from "./config";
 import { useAccessStore } from "./access";
 import { collectModelsWithDefaultModel } from "../utils/model";
 import { createEmptyMask, Mask } from "./mask";
-import { executeMcpAction, getAllTools, isMcpEnabled } from "../mcp/actions";
+import {
+  executeMcpAction,
+  getAllTools,
+  getClientsStatus,
+  isMcpEnabled,
+} from "../mcp/actions";
 import { extractMcpJson, isMcpJson } from "../mcp/utils";
 
 const localStorage = safeLocalStorage();
@@ -213,30 +218,44 @@ let mcpCache: {
   systemPrompt: "",
 };
 
-// 修改getMcpSystemPrompt函数，添加缓存机制
+// 修改getMcpSystemPrompt函数，只包含活跃状态的工具
 async function getMcpSystemPrompt(forceRefresh = false): Promise<string> {
   // 如果已有缓存且不强制刷新，直接返回
   if (mcpCache.systemPrompt && !forceRefresh) {
     return mcpCache.systemPrompt;
   }
 
+  // 获取所有工具
   const tools = await getAllTools();
+  // 获取所有客户端状态
+  const clientStatuses = await getClientsStatus();
+
   let toolsStr = "";
+  let hasActiveTools = false;
 
   tools.forEach((i) => {
-    // error client has no tools
+    // 跳过没有工具的客户端
     if (!i.tools) return;
 
-    toolsStr += MCP_TOOLS_TEMPLATE.replace(
-      "{{ clientId }}",
-      i.clientId,
-    ).replace(
-      "{{ tools }}",
-      i.tools.tools.map((p: object) => JSON.stringify(p, null, 2)).join("\n"),
-    );
+    // 检查客户端状态，只包含活跃状态的客户端
+    const clientStatus = clientStatuses[i.clientId];
+    if (clientStatus && clientStatus.status === "active") {
+      hasActiveTools = true;
+      toolsStr += MCP_TOOLS_TEMPLATE.replace(
+        "{{ clientId }}",
+        i.clientId,
+      ).replace(
+        "{{ tools }}",
+        i.tools.tools.map((p: object) => JSON.stringify(p, null, 2)).join("\n"),
+      );
+    }
   });
 
-  const prompt = MCP_SYSTEM_TEMPLATE.replace("{{ MCP_TOOLS }}", toolsStr);
+  // 如果没有活跃的工具，返回空字符串
+  const prompt = hasActiveTools
+    ? MCP_SYSTEM_TEMPLATE.replace("{{ MCP_TOOLS }}", toolsStr)
+    : "";
+
   // 更新缓存
   mcpCache.systemPrompt = prompt;
   return prompt;

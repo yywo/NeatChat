@@ -33,6 +33,8 @@ import PlayIcon from "../icons/play.svg";
 import StopIcon from "../icons/pause.svg";
 import { Path } from "../constant";
 import { useChatStore } from "../store/chat";
+import Locale from "../locales";
+import { getLang } from "../locales";
 
 interface ConfigProperty {
   type: string;
@@ -95,7 +97,21 @@ export function McpMarketPage() {
       if (!mcpEnabled) return;
       try {
         setLoadingPresets(true);
-        const response = await fetch("/mcp.json");
+        let response;
+        try {
+          // 首先尝试从 GitHub 仓库获取
+          response = await fetch(
+            "https://raw.githubusercontent.com/tianzhentech/NeatChat/refs/heads/main/public/mcp.json",
+          );
+        } catch (error) {
+          console.warn(
+            "Failed to fetch from GitHub, trying local path:",
+            error,
+          );
+          // 如果从 GitHub 获取失败，尝试从本地获取
+          response = await fetch("/mcp.json");
+        }
+
         if (!response.ok) {
           throw new Error("Failed to load preset servers");
         }
@@ -103,7 +119,7 @@ export function McpMarketPage() {
         setPresetServers(data?.data ?? []);
       } catch (error) {
         console.error("Failed to load preset servers:", error);
-        showToast("Failed to load preset servers");
+        showToast(Locale.Mcp.Market.Errors.LoadFailed);
       } finally {
         setLoadingPresets(false);
       }
@@ -125,7 +141,7 @@ export function McpMarketPage() {
         setClientStatuses(statuses);
       } catch (error) {
         console.error("Failed to load initial state:", error);
-        showToast("Failed to load initial state");
+        showToast(Locale.Mcp.Market.Errors.InitFailed);
       } finally {
         setIsLoading(false);
       }
@@ -337,6 +353,29 @@ export function McpMarketPage() {
     }
   };
 
+  // 在组件内添加一个辅助函数来获取本地化文本
+  const getLocalizedText = (textObj: any, defaultText: string = "") => {
+    if (!textObj) return defaultText;
+
+    // 获取当前语言
+    const lang = getLang().toLowerCase();
+
+    // 如果文本对象是字符串，直接返回
+    if (typeof textObj === "string") return textObj;
+
+    // 如果是对象，尝试获取当前语言的文本
+    if (typeof textObj === "object") {
+      // 优先使用当前语言
+      if (textObj[lang]) return textObj[lang];
+      // 回退到英文
+      if (textObj["en"]) return textObj["en"];
+      // 如果都没有，返回默认文本
+      return defaultText;
+    }
+
+    return defaultText;
+  };
+
   // Render configuration form
   const renderConfigForm = () => {
     const preset = presetServers.find((s) => s.id === editingServerId);
@@ -350,13 +389,13 @@ export function McpMarketPage() {
           const addButtonText =
             (prop as any).addButtonText || `Add ${itemLabel}`;
 
+          const description =
+            typeof prop.description === "object"
+              ? getLocalizedText(prop.description, key)
+              : prop.description || key;
+
           return (
-            <ListItem
-              key={key}
-              title={key}
-              subTitle={prop.description}
-              vertical
-            >
+            <ListItem key={key} title={key} subTitle={description} vertical>
               <div className={styles["path-list"]}>
                 {(currentValue as string[]).map(
                   (value: string, index: number) => (
@@ -398,8 +437,12 @@ export function McpMarketPage() {
           );
         } else if (prop.type === "string") {
           const currentValue = userConfig[key as keyof typeof userConfig] || "";
+          const description =
+            typeof prop.description === "object"
+              ? getLocalizedText(prop.description, key)
+              : prop.description || key;
           return (
-            <ListItem key={key} title={key} subTitle={prop.description}>
+            <ListItem key={key} title={key} subTitle={description}>
               <input
                 aria-label={key}
                 type="text"
@@ -426,7 +469,7 @@ export function McpMarketPage() {
 
     const statusMap = {
       undefined: null, // 未配置/未找到不显示
-      // 添加初始化状态
+      // 使用硬编码的状态文本
       initializing: (
         <span className={clsx(styles["server-status"], styles["initializing"])}>
           Initializing
@@ -463,7 +506,7 @@ export function McpMarketPage() {
       return (
         <div className={styles["loading-container"]}>
           <div className={styles["loading-text"]}>
-            Loading preset server list...
+            {Locale.Mcp.Market.Loading}
           </div>
         </div>
       );
@@ -472,7 +515,9 @@ export function McpMarketPage() {
     if (!Array.isArray(presetServers) || presetServers.length === 0) {
       return (
         <div className={styles["empty-container"]}>
-          <div className={styles["empty-text"]}>No servers available</div>
+          <div className={styles["empty-text"]}>
+            {Locale.Mcp.Market.NoServers}
+          </div>
         </div>
       );
     }
@@ -481,9 +526,12 @@ export function McpMarketPage() {
       .filter((server) => {
         if (searchText.length === 0) return true;
         const searchLower = searchText.toLowerCase();
+        const serverName = getLocalizedText(server.name, server.id);
+        const serverDesc = getLocalizedText(server.description, "");
+
         return (
-          server.name.toLowerCase().includes(searchLower) ||
-          server.description.toLowerCase().includes(searchLower) ||
+          serverName.toLowerCase().includes(searchLower) ||
+          serverDesc.toLowerCase().includes(searchLower) ||
           server.tags.some((tag) => tag.toLowerCase().includes(searchLower))
         );
       })
@@ -542,7 +590,7 @@ export function McpMarketPage() {
           <div className={styles["mcp-market-header"]}>
             <div className={styles["mcp-market-title"]}>
               <div className={styles["mcp-market-name"]}>
-                {server.name}
+                {getLocalizedText(server.name, server.id)}
                 {loadingStates[server.id] && (
                   <span
                     className={styles["operation-status"]}
@@ -575,9 +623,9 @@ export function McpMarketPage() {
               </div>
               <div
                 className={clsx(styles["mcp-market-info"], "one-line")}
-                title={server.description}
+                title={getLocalizedText(server.description, "")}
               >
-                {server.description}
+                {getLocalizedText(server.description, "")}
               </div>
             </div>
             <div className={styles["mcp-market-actions"]}>
@@ -586,7 +634,7 @@ export function McpMarketPage() {
                   {server.configurable && (
                     <IconButton
                       icon={<EditIcon />}
-                      text="Configure"
+                      text={Locale.Mcp.Market.Actions.Configure}
                       onClick={() => setEditingServerId(server.id)}
                       disabled={isLoading}
                     />
@@ -595,7 +643,7 @@ export function McpMarketPage() {
                     <>
                       <IconButton
                         icon={<PlayIcon />}
-                        text="Start"
+                        text={Locale.Mcp.Market.Actions.Start}
                         onClick={() => restartServer(server.id)}
                         disabled={isLoading}
                       />
@@ -610,7 +658,7 @@ export function McpMarketPage() {
                     <>
                       <IconButton
                         icon={<EyeIcon />}
-                        text="Tools"
+                        text={Locale.Mcp.Market.Actions.Tools}
                         onClick={async () => {
                           setViewingServerId(server.id);
                           await loadTools(server.id);
@@ -622,7 +670,7 @@ export function McpMarketPage() {
                       />
                       <IconButton
                         icon={<StopIcon />}
-                        text="Stop"
+                        text={Locale.Mcp.Market.Actions.Stop}
                         onClick={() => pauseServer(server.id)}
                         disabled={isLoading}
                       />
@@ -632,7 +680,7 @@ export function McpMarketPage() {
               ) : (
                 <IconButton
                   icon={<AddIcon />}
-                  text="Add"
+                  text={Locale.Mcp.Market.Actions.Add}
                   onClick={() => addServer(server)}
                   disabled={isLoading}
                 />
@@ -662,7 +710,7 @@ export function McpMarketPage() {
         <div className="window-header">
           <div className="window-header-title">
             <div className="window-header-main-title">
-              MCP Market
+              {Locale.Mcp.Market.Title}
               {loadingStates["all"] && (
                 <span className={styles["loading-indicator"]}>
                   {loadingStates["all"]}
@@ -670,7 +718,9 @@ export function McpMarketPage() {
               )}
             </div>
             <div className="window-header-sub-title">
-              {Object.keys(config?.mcpServers ?? {}).length} servers configured
+              {Locale.Mcp.Market.SubTitle(
+                Object.keys(config?.mcpServers ?? {}).length,
+              )}
             </div>
           </div>
 
@@ -680,7 +730,7 @@ export function McpMarketPage() {
                 icon={<RestartIcon />}
                 bordered
                 onClick={handleRestartAll}
-                text="Restart All"
+                text={Locale.Mcp.Market.Actions.RestartAll}
                 disabled={isLoading}
               />
             </div>
@@ -700,7 +750,7 @@ export function McpMarketPage() {
             <input
               type="text"
               className={styles["search-bar"]}
-              placeholder={"Search MCP Server"}
+              placeholder={Locale.Mcp.Market.SearchPlaceholder}
               autoFocus
               onInput={(e) => setSearchText(e.currentTarget.value)}
             />
@@ -713,19 +763,19 @@ export function McpMarketPage() {
         {editingServerId && (
           <div className="modal-mask">
             <Modal
-              title={`Configure Server - ${editingServerId}`}
+              title={`${Locale.Mcp.Market.ConfigModal.Title}${editingServerId}`}
               onClose={() => !isLoading && setEditingServerId(undefined)}
               actions={[
                 <IconButton
                   key="cancel"
-                  text="Cancel"
+                  text={Locale.Mcp.Market.ConfigModal.Cancel}
                   onClick={() => setEditingServerId(undefined)}
                   bordered
                   disabled={isLoading}
                 />,
                 <IconButton
                   key="confirm"
-                  text="Save"
+                  text={Locale.Mcp.Market.ConfigModal.Save}
                   type="primary"
                   onClick={saveServerConfig}
                   bordered
@@ -741,12 +791,12 @@ export function McpMarketPage() {
         {viewingServerId && (
           <div className="modal-mask">
             <Modal
-              title={`Server Details - ${viewingServerId}`}
+              title={`${Locale.Mcp.Market.ToolsModal.Title}${viewingServerId}`}
               onClose={() => setViewingServerId(undefined)}
               actions={[
                 <IconButton
                   key="close"
-                  text="Close"
+                  text={Locale.Mcp.Market.ToolsModal.Close}
                   onClick={() => setViewingServerId(undefined)}
                   bordered
                 />,
@@ -754,7 +804,7 @@ export function McpMarketPage() {
             >
               <div className={styles["tools-list"]}>
                 {isLoading ? (
-                  <div>Loading...</div>
+                  <div>{Locale.Mcp.Market.ToolsModal.Loading}</div>
                 ) : tools?.tools ? (
                   tools.tools.map(
                     (tool: ListToolsResponse["tools"], index: number) => (
@@ -767,7 +817,7 @@ export function McpMarketPage() {
                     ),
                   )
                 ) : (
-                  <div>No tools available</div>
+                  <div>{Locale.Mcp.Market.ToolsModal.NoTools}</div>
                 )}
               </div>
             </Modal>
