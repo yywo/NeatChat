@@ -226,16 +226,6 @@
       }
     },
     {
-      "id": "Everything",
-      "name": "Everything",
-      "description": "使用 Everything 搜索引擎的快速文件搜索功能",
-      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/everything",
-      "tags": ["Search", "Filesystem", "Windows"],
-      "command": "npx",
-      "baseArgs": ["-y", "@modelcontextprotocol/server-everything"],
-      "configurable": false
-    },
-    {
       "id": "SQLite",
       "name": "SQLite",
       "description": "SQLite 数据库访问和查询功能",
@@ -268,6 +258,190 @@
           "type": "param",
           "param": "--db-path",
           "position": 3
+        }
+      }
+    },
+    {
+      "id": "google-maps",
+      "name": "Google Maps",
+      "description": "Google Maps API 服务，提供地理编码、地点搜索、路线规划等功能",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/google-maps",
+      "tags": ["Google Maps", "Geolocation", "API"],
+      "command": "npx",
+      "baseArgs": [
+        "-y",
+        "@modelcontextprotocol/server-google-maps"
+      ],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "apiKey": {
+            "type": "string",
+            "description": "Google Maps API 密钥",
+            "required": true
+          },
+          "rateLimit": {
+            "type": "number",
+            "description": "API 请求速率限制（次/秒）",
+            "default": 10
+          }
+        }
+      },
+      "argsMapping": {
+        "apiKey": {
+          "type": "env",
+          "envVar": "GOOGLE_MAPS_API_KEY"
+        },
+        "rateLimit": {
+          "type": "param",
+          "param": "--rate-limit",
+          "position": 2
+        }
+      }
+    },
+    {
+      "id": "Knowledge Graph Memory",
+      "name": "Knowledge Graph Memory",
+      "description": "基于本地知识图谱的持久化记忆系统，支持实体关系建模和多维度信息存储",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/memory",
+      "tags": ["Memory", "Knowledge Graph", "Persistent Storage"],
+      "command": "npx",
+      "baseArgs": [
+        "-y",
+        "@modelcontextprotocol/server-memory"
+      ],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "MEMORY_FILE_PATH": {
+            "type": "string",
+            "description": "记忆存储文件路径",
+            "default": "memory.json"
+          }
+        }
+      },
+      "argsMapping": {
+        "MEMORY_FILE_PATH": {
+          "type": "env",
+          "envVar": "MEMORY_FILE_PATH"
+        }
+      }
+    },
+    {
+      "id": "Sequential Thinking Server",
+      "name": "Sequential Thinking Server",
+      "description": "提供结构化的问题分解与动态调整能力，支持多路径推理和假设验证",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/sequentialthinking",
+      "tags": ["problem-solving", "reasoning-paths", "dynamic-adjustment"],
+      "command": "npx",
+      "baseArgs": [
+        "-y",
+        "@modelcontextprotocol/server-sequential-thinking"
+      ],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "MAX_THOUGHTS": {
+            "type": "integer",
+            "minimum": 3,
+            "maximum": 50,
+            "description": "最大允许的思维步骤数",
+            "default": 15
+          },
+          "TIMEOUT": {
+            "type": "number",
+            "description": "单步处理超时时间（毫秒）",
+            "default": 30000
+          },
+          "REVISION_DEPTH": {
+            "type": "integer",
+            "description": "最大允许的修订深度",
+            "default": 3
+          }
+        },
+        "required": ["MAX_THOUGHTS"]
+      },
+      "argsMapping": {
+        "MAX_THOUGHTS": {
+          "type": "arg",
+          "index": 2
+        },
+        "TIMEOUT": {
+          "type": "env",
+          "envVar": "ST_TIMEOUT"
+        }
+      }
+    },
+    {
+      "id": "PostgreSQL",
+      "name": "PostgreSQL",
+      "description": "提供安全的 PostgreSQL 数据库只读访问，支持模式发现与 SQL 查询审计",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/postgres",
+      "tags": ["Database", "PostgreSQL", "Read-Only"],
+      "command": "npx",
+      "baseArgs": [
+        "-y",
+        "@modelcontextprotocol/server-postgres"
+      ],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "DB_CONNECTION_STRING": {
+            "type": "string",
+            "format": "uri",
+            "description": "PostgreSQL 连接字符串",
+            "default": "postgresql://localhost:5432/mydb"
+          },
+          "QUERY_TIMEOUT": {
+            "type": "number",
+            "description": "查询超时时间（毫秒）",
+            "default": 10000
+          }
+        },
+        "required": ["DB_CONNECTION_STRING"]
+      },
+      "argsMapping": {
+        "DB_CONNECTION_STRING": {
+          "type": "arg",
+          "index": 2
+        },
+        "QUERY_TIMEOUT": {
+          "type": "env",
+          "envVar": "PG_QUERY_TIMEOUT"
+        }
+      }
+    },
+    {
+      "id": "GitLab",
+      "name": "GitLab",
+      "description": "GitLab 项目管理、文件操作和 API 集成",
+      "repo": "https://github.com/modelcontextprotocol/servers/tree/main/src/gitlab",
+      "tags": ["GitLab", "Repository", "API"],
+      "command": "npx",
+      "baseArgs": ["-y", "@modelcontextprotocol/server-gitlab"],
+      "configurable": true,
+      "configSchema": {
+        "properties": {
+          "token": {
+            "type": "string",
+            "description": "GitLab 个人访问令牌",
+            "required": true
+          },
+          "apiUrl": {
+            "type": "string",
+            "description": "GitLab API URL（可选，用于自托管实例）",
+            "required": false
+          }
+        }
+      },
+      "argsMapping": {
+        "token": {
+          "type": "env",
+          "key": "GITLAB_PERSONAL_ACCESS_TOKEN"
+        },
+        "apiUrl": {
+          "type": "env",
+          "key": "GITLAB_API_URL"
         }
       }
     }

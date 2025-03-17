@@ -715,7 +715,7 @@ const cn = {
         Configure: "配置",
         Start: "启动",
         Stop: "停止",
-        Tools: "工具",
+        Tools: "查看",
         RestartAll: "重启所有",
       },
       Operations: {
