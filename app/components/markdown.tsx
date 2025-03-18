@@ -653,7 +653,7 @@ export function Markdown(
 
   // 检测是否滚动到底部
   const checkIfAtBottom = (target: HTMLDivElement) => {
-    const threshold = 0;
+    const threshold = 10;
     const bottomPosition =
       target.scrollHeight - target.scrollTop - target.clientHeight;
     return bottomPosition <= threshold;
