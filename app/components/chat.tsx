@@ -131,6 +131,8 @@ import {
 } from "../utils/file";
 import { getAvailableClientsCount, isMcpEnabled } from "../mcp/actions";
 
+import { ImageEditor } from "./image-editor";
+
 const localStorage = safeLocalStorage();
 
 const ttsPlayer = createTTSPlayer();
@@ -878,7 +880,7 @@ export function EditMessageModal(props: { onClose: () => void }) {
   );
 }
 
-export function DeleteImageButton(props: { deleteImage: () => void }) {
+export function DeleteImageButton(props: { deleteImage: (e?: any) => void }) {
   return (
     <div className={styles["delete-image"]} onClick={props.deleteImage}>
       <DeleteIcon />
@@ -1895,6 +1897,13 @@ function _Chat() {
     );
   };
 
+  // 在 _Chat 组件内添加新状态
+  const [editingFile, setEditingFile] = useState<FileInfo | null>(null);
+  const [showFileEditModal, setShowFileEditModal] = useState(false);
+
+  // 在_Chat组件中添加状态
+  const [editingImage, setEditingImage] = useState<string | null>(null);
+
   return (
     <div
       className={styles.chat}
@@ -2150,6 +2159,9 @@ function _Chat() {
                             className={styles["chat-message-item-image"]}
                             src={getMessageImages(message)[0]}
                             alt=""
+                            onClick={() =>
+                              setEditingImage(getMessageImages(message)[0])
+                            }
                           />
                         )}
                         {getMessageImages(message).length > 1 && (
@@ -2307,10 +2319,12 @@ function _Chat() {
                       key={`img-${index}`}
                       className={styles["attach-image"]}
                       style={{ backgroundImage: `url("${image}")` }}
+                      onClick={() => setEditingImage(image)}
                     >
                       <div className={styles["attach-image-mask"]}>
                         <DeleteImageButton
-                          deleteImage={() => {
+                          deleteImage={(e) => {
+                            e.stopPropagation(); // 防止触发图片点击事件
                             setAttachImages(
                               attachImages.filter((_, i) => i !== index),
                             );
@@ -2325,6 +2339,34 @@ function _Chat() {
                     <div
                       key={`file-${index}`}
                       className={styles["attach-file"]}
+                      onClick={async () => {
+                        // 使用与消息编辑相同的showPrompt函数
+                        const newContent = await showPrompt(
+                          `编辑文件：${file.name}`,
+                          file.content,
+                          20, // 更多行数以便于编辑文件内容
+                        );
+
+                        if (newContent) {
+                          // 更新文件内容
+                          const updatedFiles = attachedFiles.map((f, i) => {
+                            if (i === index) {
+                              // 更新文件大小
+                              const newSize = new Blob([newContent]).size;
+                              return {
+                                ...f,
+                                content: newContent,
+                                size: newSize,
+                                originalFile: new File([newContent], f.name, {
+                                  type: f.type,
+                                }),
+                              };
+                            }
+                            return f;
+                          });
+                          setAttachedFiles(updatedFiles);
+                        }
+                      }}
                     >
                       <div className={styles["attach-file-card"]}>
                         <div
@@ -2346,7 +2388,10 @@ function _Chat() {
                       </div>
                       <div className={styles["attach-image-mask"]}>
                         <DeleteImageButton
-                          deleteImage={() => deleteAttachedFile(index)}
+                          deleteImage={(e) => {
+                            e.stopPropagation(); // 防止触发文件点击事件
+                            deleteAttachedFile(index);
+                          }}
                         />
                       </div>
                     </div>
@@ -2396,6 +2441,93 @@ function _Chat() {
 
       {showShortcutKeyModal && (
         <ShortcutKeyModal onClose={() => setShowShortcutKeyModal(false)} />
+      )}
+
+      {showFileEditModal && editingFile && (
+        <div className="modal-mask">
+          <Modal
+            title={`编辑文件内容: ${editingFile.name}`}
+            onClose={() => setShowFileEditModal(false)}
+            actions={[
+              <IconButton
+                text={Locale.UI.Cancel}
+                icon={<CancelIcon />}
+                key="cancel"
+                onClick={() => {
+                  setShowFileEditModal(false);
+                }}
+              />,
+              <IconButton
+                type="primary"
+                text={Locale.UI.Confirm}
+                icon={<ConfirmIcon />}
+                key="ok"
+                onClick={() => {
+                  // 保存编辑后的内容
+                  const updatedFiles = attachedFiles.map((file) => {
+                    if (file === editingFile) {
+                      // 更新文件大小
+                      const newSize = new Blob([editingFile.content]).size;
+                      return {
+                        ...file,
+                        size: newSize,
+                        originalFile: new File(
+                          [editingFile.content],
+                          file.name,
+                          { type: file.type },
+                        ),
+                      };
+                    }
+                    return file;
+                  });
+                  setAttachedFiles(updatedFiles);
+                  setShowFileEditModal(false);
+                }}
+              />,
+            ]}
+          >
+            <div style={{ maxHeight: "70vh", overflowY: "auto" }}>
+              <textarea
+                style={{
+                  width: "100%",
+                  height: "300px",
+                  padding: "8px",
+                  fontFamily: "monospace",
+                  fontSize: "14px",
+                  border: "1px solid #ccc",
+                  borderRadius: "4px",
+                  resize: "vertical",
+                }}
+                value={editingFile.content}
+                onChange={(e) => {
+                  // 更新正在编辑的文件内容
+                  setEditingFile({
+                    ...editingFile,
+                    content: e.target.value,
+                  });
+                }}
+              />
+            </div>
+          </Modal>
+        </div>
+      )}
+
+      {editingImage && (
+        <ImageEditor
+          imageUrl={editingImage}
+          onClose={() => setEditingImage(null)}
+          onSave={(editedImage) => {
+            // 替换原图片URL
+            if (attachImages.includes(editingImage)) {
+              setAttachImages(
+                attachImages.map((img) =>
+                  img === editingImage ? editedImage : img,
+                ),
+              );
+            }
+            setEditingImage(null);
+          }}
+        />
       )}
     </div>
   );

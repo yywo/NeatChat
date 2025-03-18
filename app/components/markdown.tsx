@@ -444,17 +444,8 @@ function _MarkDownContent(props: { content: string }) {
 
           // 检测并阻止javascript协议
           if (href.toLowerCase().startsWith("javascript:")) {
-            // 返回没有href的链接或替换为安全的替代方案
-            return (
-              <a
-                {...aProps}
-                onClick={(e) => e.preventDefault()}
-                style={{ color: "gray", textDecoration: "line-through" }}
-                title="已阻止不安全链接"
-              >
-                {aProps.children}
-              </a>
-            );
+            // 简单地显示文本内容，不添加任何特殊样式或提示
+            return <span>{aProps.children}</span>;
           }
 
           // 处理文件附件链接
