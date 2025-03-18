@@ -869,6 +869,7 @@ const cn = {
     More: "查看全部",
     Think: "已深度思考",
     Thinking: "正在思考中...",
+    ThinkingTime: (seconds: number) => ` (用时 ${seconds} 秒)`,
   },
 
   URLCommand: {

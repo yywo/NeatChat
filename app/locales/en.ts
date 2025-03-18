@@ -881,6 +881,7 @@ const en: LocaleType = {
     ConfirmNoShow: "Confirm to disable？You can enable it in settings later.",
     Thinking: "Thinking...",
     Think: "Deep Thought",
+    ThinkingTime: (seconds: number) => ` (took ${seconds} seconds)`,
   },
 
   UI: {
