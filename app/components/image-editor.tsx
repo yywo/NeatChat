@@ -14,6 +14,7 @@ enum DrawingTool {
   Arrow = "arrow",
   Rectangle = "rectangle",
   Circle = "circle",
+  Eraser = "eraser",
 }
 
 // 添加翻转图标的样式封装组件
@@ -40,6 +41,9 @@ export function ImageEditor(props: {
     null,
   );
   const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(
+    null,
+  );
 
   // 初始化Canvas
   useEffect(() => {
@@ -61,6 +65,9 @@ export function ImageEditor(props: {
 
       // 绘制图片
       context.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+      // 保存原始图像
+      setOriginalImage(image);
 
       // 保存初始状态到历史记录
       saveToHistory();
@@ -155,18 +162,71 @@ export function ImageEditor(props: {
     }
 
     // 对于形状工具，记录起始点
-    if (selectedTool !== DrawingTool.Brush) {
+    if (
+      selectedTool !== DrawingTool.Brush &&
+      selectedTool !== DrawingTool.Eraser
+    ) {
       setStartPoint({ x, y });
       // 保存当前状态用于预览
       setPreviewImage(canvasRef.current.toDataURL());
     } else {
-      // 自由绘制模式
+      // 自由绘制模式或橡皮擦模式
       ctx.beginPath();
       ctx.moveTo(x, y);
       ctx.lineWidth = brushSize;
       ctx.lineCap = "round";
-      ctx.strokeStyle = color;
+
+      if (selectedTool === DrawingTool.Eraser) {
+        // 新版橡皮擦：通过绘制原始图像来"擦除"
+        eraseAt(x, y, brushSize / 2);
+      } else {
+        // 画笔模式
+        ctx.globalCompositeOperation = "source-over";
+        ctx.strokeStyle = color;
+      }
     }
+  };
+
+  // 添加专门的擦除函数
+  const eraseAt = (x: number, y: number, radius: number) => {
+    if (!ctx || !originalImage || !canvasRef.current) return;
+
+    const lastDrawingState = history[history.length - 1];
+    if (!lastDrawingState) return;
+
+    // 保存当前状态
+    ctx.save();
+
+    // 创建圆形剪切区域（即橡皮擦形状）
+    ctx.beginPath();
+    ctx.arc(x, y, radius, 0, Math.PI * 2);
+    ctx.clip();
+
+    // 从上一个历史状态中获取当前绘制
+    const currentImg = new Image();
+    currentImg.onload = () => {
+      if (!ctx || !originalImage || !canvasRef.current) return;
+
+      // 清除该区域
+      ctx.clearRect(x - radius, y - radius, radius * 2, radius * 2);
+
+      // 在该区域绘制原始图像
+      ctx.drawImage(
+        originalImage,
+        x - radius,
+        y - radius,
+        radius * 2,
+        radius * 2,
+        x - radius,
+        y - radius,
+        radius * 2,
+        radius * 2,
+      );
+
+      // 恢复上下文状态
+      ctx.restore();
+    };
+    currentImg.src = lastDrawingState;
   };
 
   // 绘制
@@ -191,13 +251,17 @@ export function ImageEditor(props: {
     }
 
     if (selectedTool === DrawingTool.Brush) {
-      // 自由绘制模式
+      // 画笔模式
       ctx.lineTo(x, y);
       ctx.stroke();
+    } else if (selectedTool === DrawingTool.Eraser) {
+      // 橡皮擦模式 - 使用新的擦除函数
+      eraseAt(x, y, brushSize / 2);
     } else if (startPoint && previewImage) {
       // 形状绘制模式 - 预览
       const img = new Image();
       img.onload = () => {
+        ctx.globalCompositeOperation = "source-over"; // 重置为默认模式
         ctx.clearRect(
           0,
           0,
@@ -236,6 +300,7 @@ export function ImageEditor(props: {
 
     if (ctx) {
       ctx.closePath();
+      ctx.globalCompositeOperation = "source-over"; // 重置为默认模式
     }
 
     // 重置状态
@@ -371,6 +436,15 @@ export function ImageEditor(props: {
                 title="画笔工具"
               >
                 ✏️
+              </div>
+              <div
+                className={`${styles["tool-option"]} ${
+                  selectedTool === DrawingTool.Eraser ? styles["selected"] : ""
+                }`}
+                onClick={() => setSelectedTool(DrawingTool.Eraser)}
+                title="橡皮擦"
+              >
+                🧼
               </div>
               <div
                 className={`${styles["tool-option"]} ${
