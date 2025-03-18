@@ -11,17 +11,11 @@ import { copyToClipboard, useWindowSize } from "../utils";
 import mermaid from "mermaid";
 import Locale from "../locales";
 import LoadingIcon from "../icons/three-dots.svg";
-import ReloadButtonIcon from "../icons/reload.svg";
 import React from "react";
 import { useDebouncedCallback } from "use-debounce";
-import { showImageModal, FullScreen, showToast } from "./ui-lib";
-import {
-  ArtifactsShareButton,
-  HTMLPreview,
-  HTMLPreviewHander,
-} from "./artifacts";
+import { showImageModal, showToast } from "./ui-lib";
+import { HTMLPreview, HTMLPreviewHander } from "./artifacts";
 import { useChatStore } from "../store";
-import { IconButton } from "./button";
 
 import { useAppConfig } from "../store/config";
 import { FileAttachment } from "./file-attachment";
@@ -160,25 +154,12 @@ export function PreCode(props: { children: any }) {
         <Mermaid code={mermaidCode} key={mermaidCode} />
       )}
       {htmlCode.length > 0 && enableArtifacts && (
-        <FullScreen className="no-dark html" right={70}>
-          <ArtifactsShareButton
-            style={{ position: "absolute", right: 20, top: 10 }}
-            getCode={() => htmlCode}
-          />
-          <IconButton
-            style={{ position: "absolute", right: 120, top: 10 }}
-            bordered
-            icon={<ReloadButtonIcon />}
-            shadow
-            onClick={() => previewRef.current?.reload()}
-          />
-          <HTMLPreview
-            ref={previewRef}
-            code={htmlCode}
-            autoHeight={!document.fullscreenElement}
-            height={!document.fullscreenElement ? 600 : height}
-          />
-        </FullScreen>
+        <HTMLPreview
+          ref={previewRef}
+          code={htmlCode}
+          autoHeight={!document.fullscreenElement}
+          height={!document.fullscreenElement ? 600 : height}
+        />
       )}
     </>
   );
