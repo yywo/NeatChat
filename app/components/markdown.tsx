@@ -295,6 +295,16 @@ function formatThinkText(text: string): string {
     return null;
   };
 
+  // 转义HTML特殊字符的函数
+  const escapeHtml = (str: string) => {
+    return str
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  };
+
   // 处理正在思考的情况（只有开始标签）
   if (text.startsWith("<think>") && !text.includes("</think>")) {
     // 获取 <think> 后的所有内容
@@ -312,8 +322,9 @@ function formatThinkText(text: string): string {
       console.error("保存思考开始时间出错:", e);
     }
 
-    // 给每一行添加引用符号
-    const quotedContent = thinkContent
+    // 转义内容中的HTML标签，然后给每一行添加引用符号
+    const escapedContent = escapeHtml(thinkContent);
+    const quotedContent = escapedContent
       .split("\n")
       .map((line: string) => (line.trim() ? `> ${line}` : ">"))
       .join("\n");
@@ -329,8 +340,9 @@ ${quotedContent}
   // 处理完整的思考过程（有结束标签）
   const pattern = /^<think>([\s\S]*?)<\/think>/;
   return text.replace(pattern, (match, thinkContent) => {
-    // 给每一行添加引用符号
-    const quotedContent = thinkContent
+    // 转义内容中的HTML标签，然后给每一行添加引用符号
+    const escapedContent = escapeHtml(thinkContent);
+    const quotedContent = escapedContent
       .split("\n")
       .map((line: string) => (line.trim() ? `> ${line}` : ">"))
       .join("\n");
