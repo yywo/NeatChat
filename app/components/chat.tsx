@@ -1904,6 +1904,11 @@ function _Chat() {
   // 在_Chat组件中添加状态
   const [editingImage, setEditingImage] = useState<string | null>(null);
 
+  // 在_Chat组件中添加状态，记录当前编辑图片所属的消息ID
+  const [editingImageMessageId, setEditingImageMessageId] = useState<
+    string | null
+  >(null);
+
   return (
     <div
       className={styles.chat}
@@ -2159,9 +2164,10 @@ function _Chat() {
                             className={styles["chat-message-item-image"]}
                             src={getMessageImages(message)[0]}
                             alt=""
-                            onClick={() =>
-                              setEditingImage(getMessageImages(message)[0])
-                            }
+                            onClick={() => {
+                              setEditingImage(getMessageImages(message)[0]);
+                              setEditingImageMessageId(message.id); // 保存图片所属的消息ID
+                            }}
                           />
                         )}
                         {getMessageImages(message).length > 1 && (
@@ -2183,6 +2189,10 @@ function _Chat() {
                                   key={index}
                                   src={image}
                                   alt=""
+                                  onClick={() => {
+                                    setEditingImage(image);
+                                    setEditingImageMessageId(message.id); // 保存图片所属的消息ID
+                                  }}
                                 />
                               );
                             })}
@@ -2515,9 +2525,12 @@ function _Chat() {
       {editingImage && (
         <ImageEditor
           imageUrl={editingImage}
-          onClose={() => setEditingImage(null)}
+          onClose={() => {
+            setEditingImage(null);
+            setEditingImageMessageId(null); // 清除消息ID
+          }}
           onSave={(editedImage) => {
-            // 替换原图片URL
+            // 检查是否为附件图片
             if (attachImages.includes(editingImage)) {
               setAttachImages(
                 attachImages.map((img) =>
@@ -2525,7 +2538,48 @@ function _Chat() {
                 ),
               );
             }
+            // 检查是否为消息中的图片
+            else if (editingImageMessageId) {
+              // 更新消息中的图片
+              chatStore.updateTargetSession(session, (session) => {
+                // 查找所有消息(包括上下文消息)
+                const messages = session.mask.context.concat(session.messages);
+                const messageToUpdate = messages.find(
+                  (m) => m.id === editingImageMessageId,
+                );
+
+                if (messageToUpdate) {
+                  // 处理两种可能的消息内容格式
+                  if (typeof messageToUpdate.content === "string") {
+                    // 文本消息内容 - 不应该有图片，但为防止错误进行处理
+                    messageToUpdate.content = messageToUpdate.content;
+                  } else if (Array.isArray(messageToUpdate.content)) {
+                    // 多模态内容 - 找到并替换图片URL
+                    messageToUpdate.content = messageToUpdate.content.map(
+                      (item) => {
+                        if (
+                          item.type === "image_url" &&
+                          item.image_url &&
+                          item.image_url.url === editingImage
+                        ) {
+                          return {
+                            ...item,
+                            image_url: {
+                              ...item.image_url,
+                              url: editedImage,
+                            },
+                          };
+                        }
+                        return item;
+                      },
+                    );
+                  }
+                }
+              });
+            }
+
             setEditingImage(null);
+            setEditingImageMessageId(null); // 清除消息ID
           }}
         />
       )}

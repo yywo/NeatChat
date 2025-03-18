@@ -44,6 +44,7 @@ export function ImageEditor(props: {
   const [originalImage, setOriginalImage] = useState<HTMLImageElement | null>(
     null,
   );
+  const [prevBrushSize, setPrevBrushSize] = useState(5);
 
   // 初始化Canvas
   useEffect(() => {
@@ -432,7 +433,12 @@ export function ImageEditor(props: {
                 className={`${styles["tool-option"]} ${
                   selectedTool === DrawingTool.Brush ? styles["selected"] : ""
                 }`}
-                onClick={() => setSelectedTool(DrawingTool.Brush)}
+                onClick={() => {
+                  if (selectedTool === DrawingTool.Eraser) {
+                    setBrushSize(prevBrushSize);
+                  }
+                  setSelectedTool(DrawingTool.Brush);
+                }}
                 title="画笔工具"
               >
                 ✏️
@@ -441,7 +447,13 @@ export function ImageEditor(props: {
                 className={`${styles["tool-option"]} ${
                   selectedTool === DrawingTool.Eraser ? styles["selected"] : ""
                 }`}
-                onClick={() => setSelectedTool(DrawingTool.Eraser)}
+                onClick={() => {
+                  if (selectedTool !== DrawingTool.Eraser) {
+                    setPrevBrushSize(brushSize);
+                  }
+                  setSelectedTool(DrawingTool.Eraser);
+                  setBrushSize(20); // 设置为最粗的笔刷粗细
+                }}
                 title="橡皮擦"
               >
                 🧼
@@ -450,7 +462,12 @@ export function ImageEditor(props: {
                 className={`${styles["tool-option"]} ${
                   selectedTool === DrawingTool.Line ? styles["selected"] : ""
                 }`}
-                onClick={() => setSelectedTool(DrawingTool.Line)}
+                onClick={() => {
+                  if (selectedTool === DrawingTool.Eraser) {
+                    setBrushSize(prevBrushSize);
+                  }
+                  setSelectedTool(DrawingTool.Line);
+                }}
                 title="直线工具"
               >
                 ⁄
@@ -459,7 +476,12 @@ export function ImageEditor(props: {
                 className={`${styles["tool-option"]} ${
                   selectedTool === DrawingTool.Arrow ? styles["selected"] : ""
                 }`}
-                onClick={() => setSelectedTool(DrawingTool.Arrow)}
+                onClick={() => {
+                  if (selectedTool === DrawingTool.Eraser) {
+                    setBrushSize(prevBrushSize);
+                  }
+                  setSelectedTool(DrawingTool.Arrow);
+                }}
                 title="箭头工具"
               >
                 →
@@ -470,7 +492,12 @@ export function ImageEditor(props: {
                     ? styles["selected"]
                     : ""
                 }`}
-                onClick={() => setSelectedTool(DrawingTool.Rectangle)}
+                onClick={() => {
+                  if (selectedTool === DrawingTool.Eraser) {
+                    setBrushSize(prevBrushSize);
+                  }
+                  setSelectedTool(DrawingTool.Rectangle);
+                }}
                 title="矩形工具"
               >
                 □
@@ -479,7 +506,12 @@ export function ImageEditor(props: {
                 className={`${styles["tool-option"]} ${
                   selectedTool === DrawingTool.Circle ? styles["selected"] : ""
                 }`}
-                onClick={() => setSelectedTool(DrawingTool.Circle)}
+                onClick={() => {
+                  if (selectedTool === DrawingTool.Eraser) {
+                    setBrushSize(prevBrushSize);
+                  }
+                  setSelectedTool(DrawingTool.Circle);
+                }}
                 title="圆形工具"
               >
                 ○
