@@ -145,7 +145,7 @@ export function ImageEditor(props: {
     const scaleX = canvasRef.current.width / rect.width;
     const scaleY = canvasRef.current.height / rect.height;
 
-    let x, y;
+    let x: number, y: number;
     if ("touches" in e) {
       x = (e.touches[0].clientX - rect.left) * scaleX;
       y = (e.touches[0].clientY - rect.top) * scaleY;
@@ -181,7 +181,7 @@ export function ImageEditor(props: {
     const scaleX = canvasRef.current.width / rect.width;
     const scaleY = canvasRef.current.height / rect.height;
 
-    let x, y;
+    let x: number, y: number;
     if ("touches" in e) {
       x = (e.touches[0].clientX - rect.left) * scaleX;
       y = (e.touches[0].clientY - rect.top) * scaleY;
