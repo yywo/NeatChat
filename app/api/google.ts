@@ -126,7 +126,7 @@ async function request(req: NextRequest, apiKey: string) {
   // 处理请求体，对于图像生成请求可能需要特殊处理
   let body: BodyInit | null = req.body;
 
-  // 如果是图像生成请求，可能需要确保请求体包含正确的 responseModalities
+  // 如果是图像生成请求，确保请求体包含正确的 responseModalities
   if (isImageGenerationRequest && req.body) {
     try {
       // 克隆请求以读取其内容
@@ -139,6 +139,7 @@ async function request(req: NextRequest, apiKey: string) {
         bodyJson.generationConfig = {};
       }
 
+      // 确保 responseModalities 包含 Image
       if (
         !bodyJson.generationConfig.responseModalities ||
         !bodyJson.generationConfig.responseModalities.includes("Image")
@@ -146,14 +147,8 @@ async function request(req: NextRequest, apiKey: string) {
         bodyJson.generationConfig.responseModalities = ["Text", "Image"];
       }
 
-      // 创建新的 ReadableStream 而不是字符串
-      const jsonString = JSON.stringify(bodyJson);
-      body = new ReadableStream({
-        start(controller) {
-          controller.enqueue(new TextEncoder().encode(jsonString));
-          controller.close();
-        },
-      });
+      // 创建新的请求体
+      body = JSON.stringify(bodyJson);
     } catch (e) {
       console.error(
         "[Google Image Generation] Failed to process request body",

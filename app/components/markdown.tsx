@@ -465,6 +465,57 @@ function _MarkDownContent(props: { content: string }) {
   };
 
   const escapedContent = useMemo(() => {
+    // 检查是否是 base64 图像数据
+    try {
+      // 尝试解析整个内容
+      const jsonData = JSON.parse(props.content);
+      if (jsonData.type === "base64_image") {
+        // 如果有附加文本，添加到图像后面
+        const textContent = jsonData.text ? `\n\n${jsonData.text}` : "";
+        return `![Generated Image](${jsonData.data})${textContent}`;
+      }
+    } catch (e) {
+      // 不是 JSON 格式，继续检查内容中是否包含 JSON 字符串
+
+      // 尝试匹配完整的 JSON 字符串模式
+      const jsonRegex = /(\{.*"type"\s*:\s*"base64_image".*?\})/;
+      const jsonMatch = jsonRegex.exec(props.content);
+
+      if (jsonMatch && jsonMatch[1]) {
+        try {
+          // 尝试解析匹配到的 JSON 字符串
+          const jsonData = JSON.parse(jsonMatch[1]);
+          if (jsonData.type === "base64_image" && jsonData.data) {
+            // 分析原始内容，保持文本顺序
+            const parts = props.content.split(jsonMatch[1]);
+            const beforeText = parts[0] ? `${parts[0]}\n\n` : "";
+            const afterText = parts[1] ? `\n\n${parts[1]}` : "";
+            const imageText = jsonData.text ? `\n\n${jsonData.text}` : "";
+
+            return `${beforeText}![Generated Image](${jsonData.data})${imageText}${afterText}`;
+          }
+        } catch (jsonError) {
+          console.error("Failed to parse JSON in content:", jsonError);
+        }
+      }
+
+      // 尝试其他正则表达式匹配
+      const regex = /\{"type":"base64_image","data":"(data:[^"]+)".*?\}/g;
+      const match = regex.exec(props.content);
+      if (match && match[1]) {
+        // 找到了 base64 图像数据
+        return `![Generated Image](${match[1]})`;
+      }
+
+      // 尝试另一种格式
+      const regex2 = /\{"data":"(data:[^"]+)","type":"base64_image".*?\}/g;
+      const match2 = regex2.exec(props.content);
+      if (match2 && match2[1]) {
+        // 找到了 base64 图像数据
+        return `![Generated Image](${match2[1]})`;
+      }
+    }
+
     const processedContent = replaceFileAttachments(props.content);
     return tryWrapHtmlCode(formatThinkText(escapeBrackets(processedContent)));
   }, [props.content]);
