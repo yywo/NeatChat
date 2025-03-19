@@ -637,24 +637,30 @@ export const useChatStore = createPersistStore(
           (session.mask.modelConfig.model.startsWith("gpt-") ||
             session.mask.modelConfig.model.startsWith("chatgpt-"));
 
-        // 直接使用缓存的MCP状态，不再需要异步检查
+        // 直接使用缓存的MCP状态
         const mcpEnabled = mcpCache.enabled;
         const mcpSystemPrompt = mcpEnabled ? mcpCache.systemPrompt : "";
 
         var systemPrompts: ChatMessage[] = [];
 
+        // 修改这部分逻辑，确保不会发送空的系统提示词
         if (shouldInjectSystemPrompts) {
-          systemPrompts = [
-            createMessage({
-              role: "system",
-              content:
-                fillTemplateWith("", {
-                  ...modelConfig,
-                  template: DEFAULT_SYSTEM_TEMPLATE,
-                }) + mcpSystemPrompt,
-            }),
-          ];
-        } else if (mcpEnabled) {
+          const defaultSystemPrompt = fillTemplateWith("", {
+            ...modelConfig,
+            template: DEFAULT_SYSTEM_TEMPLATE,
+          });
+
+          // 只有当有默认系统提示词或MCP系统提示词时才添加系统消息
+          if (defaultSystemPrompt || mcpSystemPrompt) {
+            systemPrompts = [
+              createMessage({
+                role: "system",
+                content: defaultSystemPrompt + mcpSystemPrompt,
+              }),
+            ];
+          }
+        } else if (mcpEnabled && mcpSystemPrompt) {
+          // 只有当MCP启用且有MCP系统提示词时才添加系统消息
           systemPrompts = [
             createMessage({
               role: "system",
@@ -663,7 +669,7 @@ export const useChatStore = createPersistStore(
           ];
         }
 
-        if (shouldInjectSystemPrompts || mcpEnabled) {
+        if (systemPrompts.length > 0) {
           console.log(
             "[Global System Prompt] ",
             systemPrompts.at(0)?.content ?? "empty",
