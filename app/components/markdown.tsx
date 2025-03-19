@@ -295,14 +295,28 @@ function formatThinkText(text: string): string {
     return null;
   };
 
-  // 转义HTML特殊字符的函数
-  const escapeHtml = (str: string) => {
-    return str
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
+  // 转义HTML特殊字符的函数，但保留代码块内容
+  const escapeHtmlPreserveCodeBlocks = (str: string) => {
+    // 分离代码块和非代码块
+    const codeBlockRegex = /(```[\s\S]*?```|`[^`]*`)/g;
+    const parts = str.split(codeBlockRegex);
+
+    // 处理每个部分
+    return parts
+      .map((part, index) => {
+        // 奇数索引是代码块，保持原样
+        if (index % 2 === 1) {
+          return part;
+        }
+        // 偶数索引是普通文本，需要转义
+        return part
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      })
+      .join("");
   };
 
   // 处理正在思考的情况（只有开始标签）
@@ -322,8 +336,8 @@ function formatThinkText(text: string): string {
       console.error("保存思考开始时间出错:", e);
     }
 
-    // 转义内容中的HTML标签，然后给每一行添加引用符号
-    const escapedContent = escapeHtml(thinkContent);
+    // 转义内容中的HTML标签，但保留代码块，然后给每一行添加引用符号
+    const escapedContent = escapeHtmlPreserveCodeBlocks(thinkContent);
     const quotedContent = escapedContent
       .split("\n")
       .map((line: string) => (line.trim() ? `> ${line}` : ">"))
@@ -340,8 +354,8 @@ ${quotedContent}
   // 处理完整的思考过程（有结束标签）
   const pattern = /^<think>([\s\S]*?)<\/think>/;
   return text.replace(pattern, (match, thinkContent) => {
-    // 转义内容中的HTML标签，然后给每一行添加引用符号
-    const escapedContent = escapeHtml(thinkContent);
+    // 转义内容中的HTML标签，但保留代码块，然后给每一行添加引用符号
+    const escapedContent = escapeHtmlPreserveCodeBlocks(thinkContent);
     const quotedContent = escapedContent
       .split("\n")
       .map((line: string) => (line.trim() ? `> ${line}` : ">"))
