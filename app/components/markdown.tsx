@@ -295,26 +295,58 @@ function formatThinkText(text: string): string {
     return null;
   };
 
-  // 转义HTML特殊字符的函数，但保留代码块内容
+  // 改进的 HTML 转义函数，更好地处理代码块和 HTML 标签
   const escapeHtmlPreserveCodeBlocks = (str: string) => {
-    // 分离代码块和非代码块
-    const codeBlockRegex = /(```[\s\S]*?```|`[^`]*`)/g;
-    const parts = str.split(codeBlockRegex);
+    // 使用更复杂的正则表达式来匹配代码块
+    // 这个正则表达式匹配 ```code``` 和 `inline code`
+    const codeBlockRegex = /(```[\s\S]*?```|`[^`\n]+`)/g;
+
+    // 将字符串分割成代码块和非代码块部分
+    const parts = [];
+    let lastIndex = 0;
+    let match;
+
+    while ((match = codeBlockRegex.exec(str)) !== null) {
+      // 添加代码块前的文本（需要转义）
+      if (match.index > lastIndex) {
+        parts.push({
+          text: str.substring(lastIndex, match.index),
+          isCode: false,
+        });
+      }
+
+      // 添加代码块（不需要转义）
+      parts.push({
+        text: match[0],
+        isCode: true,
+      });
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // 添加最后一部分文本（如果有）
+    if (lastIndex < str.length) {
+      parts.push({
+        text: str.substring(lastIndex),
+        isCode: false,
+      });
+    }
 
     // 处理每个部分
     return parts
-      .map((part, index) => {
-        // 奇数索引是代码块，保持原样
-        if (index % 2 === 1) {
-          return part;
+      .map((part) => {
+        if (part.isCode) {
+          // 代码块保持原样
+          return part.text;
+        } else {
+          // 非代码块部分需要转义 HTML 标签
+          return part.text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
         }
-        // 偶数索引是普通文本，需要转义
-        return part
-          .replace(/&/g, "&amp;")
-          .replace(/</g, "&lt;")
-          .replace(/>/g, "&gt;")
-          .replace(/"/g, "&quot;")
-          .replace(/'/g, "&#039;");
       })
       .join("");
   };
