@@ -13,7 +13,7 @@ import {
     ChatMessageTool,
     usePluginStore,
 } from "@/app/store";
-import { streamWithThink } from "@/app/utils/chat";
+import { stream } from "@/app/utils/chat";
 import {
     ChatOptions,
     getHeaders,
@@ -22,10 +22,7 @@ import {
     SpeechOptions,
 } from "../api";
 import { getClientConfig } from "@/app/config/client";
-import {
-    getMessageTextContent,
-    getMessageTextContentWithoutThinking,
-} from "@/app/utils";
+import { getMessageTextContent } from "@/app/utils";
 import { RequestPayload } from "./openai";
 import { fetch } from "@/app/utils/stream";
 
@@ -50,10 +47,7 @@ export class WenxinApi implements LLMApi {
         if (baseUrl.endsWith("/")) {
             baseUrl = baseUrl.slice(0, baseUrl.length - 1);
         }
-        if (
-            !baseUrl.startsWith("http") &&
-            !baseUrl.startsWith(ApiPath.Wenxin)
-        ) {
+        if (!baseUrl.startsWith("http") && !baseUrl.startsWith(ApiPath.Wenxin)) {
             baseUrl = "https://" + baseUrl;
         }
 
@@ -73,13 +67,8 @@ export class WenxinApi implements LLMApi {
     async chat(options: ChatOptions) {
         const messages: ChatOptions["messages"] = [];
         for (const v of options.messages) {
-            if (v.role === "assistant") {
-                const content = getMessageTextContentWithoutThinking(v);
-                messages.push({ role: v.role, content });
-            } else {
-                const content = getMessageTextContent(v);
-                messages.push({ role: v.role, content });
-            }
+            const content = getMessageTextContent(v);
+            messages.push({ role: v.role, content });
         }
 
         const modelConfig = {
@@ -118,8 +107,6 @@ export class WenxinApi implements LLMApi {
                 headers: getHeaders(),
             };
 
-            // console.log(chatPayload);
-
             // make a fetch request
             const requestTimeoutId = setTimeout(
                 () => controller.abort(),
@@ -132,7 +119,7 @@ export class WenxinApi implements LLMApi {
                     .getAsTools(
                         useChatStore.getState().currentSession().mask?.plugin || [],
                     );
-                return streamWithThink(
+                return stream(
                     chatPath,
                     requestPayload,
                     getHeaders(),
@@ -145,9 +132,8 @@ export class WenxinApi implements LLMApi {
                         const json = JSON.parse(text);
                         const choices = json.choices as Array<{
                             delta: {
-                                content: string | null;
+                                content: string;
                                 tool_calls: ChatMessageTool[];
-                                reasoning_content: string | null;
                             };
                         }>;
                         const tool_calls = choices[0]?.delta?.tool_calls;
@@ -169,36 +155,7 @@ export class WenxinApi implements LLMApi {
                                 runTools[index]["function"]["arguments"] += args;
                             }
                         }
-                        const reasoning = choices[0]?.delta?.reasoning_content;
-                        const content = choices[0]?.delta?.content;
-
-                        // Skip if both content and reasoning_content are empty or null
-                        if (
-                            (!reasoning || reasoning.trim().length === 0) &&
-                            (!content || content.trim().length === 0)
-                        ) {
-                            return {
-                                isThinking: false,
-                                content: "",
-                            };
-                        }
-
-                        if (reasoning && reasoning.trim().length > 0) {
-                            return {
-                                isThinking: true,
-                                content: reasoning,
-                            };
-                        } else if (content && content.trim().length > 0) {
-                            return {
-                                isThinking: false,
-                                content: content,
-                            };
-                        }
-
-                        return {
-                            isThinking: false,
-                            content: "",
-                        };
+                        return choices[0]?.delta?.content;
                     },
                     // processToolMessage, include tool_calls message and tool call results
                     (
