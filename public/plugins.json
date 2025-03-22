@@ -23,5 +23,14 @@
     "id": "jinaurl",
     "name": "JinaURLContentReader",
     "schema": "/plugins/jinaurl.json"
+  },
+  {
+    "id": "webpilot",
+    "name": "WebPilot",
+    "schema": "/plugins/webpilot.json",
+    "authType": "custom",
+    "authLocation": "header",
+    "authHeader": "webpilot-api-key",
+    "authToken": "openai-api-key"
   }
 ]
