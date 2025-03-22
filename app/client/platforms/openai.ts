@@ -192,6 +192,7 @@ export class ChatGPTApi implements LLMApi {
         providerName: options.config.providerName,
       },
     };
+    
 
     let requestPayload: RequestPayload | DalleRequestPayload;
 

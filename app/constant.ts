@@ -32,6 +32,8 @@ export const XAI_BASE_URL = "https://api.x.ai";
 
 export const CHATGLM_BASE_URL = "https://open.bigmodel.cn";
 
+export const WENXIN_BASE_URL = "https://qianfan.bj.baidubce.com";
+
 export const CACHE_URL_PREFIX = "/api/cache";
 export const UPLOAD_URL = `${CACHE_URL_PREFIX}/upload`;
 
@@ -66,6 +68,7 @@ export enum ApiPath {
   Artifacts = "/api/artifacts",
   XAI = "/api/xai",
   ChatGLM = "/api/chatglm",
+  Wenxin = "/api/wenxin",
 }
 
 export enum SlotID {
@@ -124,6 +127,7 @@ export enum ServiceProvider {
   Iflytek = "Iflytek",
   XAI = "XAI",
   ChatGLM = "ChatGLM",
+  Wenxin = "Wenxin",
 }
 
 // Google API safety settings, see https://ai.google.dev/gemini-api/docs/safety-settings
@@ -148,6 +152,7 @@ export enum ModelProvider {
   Iflytek = "Iflytek",
   XAI = "XAI",
   ChatGLM = "ChatGLM",
+  Wenxin = "Wenxin",
 }
 
 export const Stability = {
@@ -238,6 +243,11 @@ export const XAI = {
 export const ChatGLM = {
   ExampleEndpoint: CHATGLM_BASE_URL,
   ChatPath: "api/paas/v4/chat/completions",
+};
+
+export const Wenxin = {
+  ExampleEndpoint: WENXIN_BASE_URL,
+  ChatPath: "v2/chat/completions",
 };
 
 export const DEFAULT_INPUT_TEMPLATE = `{{input}}`; // input / time / model / lang
@@ -410,6 +420,10 @@ const chatglmModels = [
   "glm-4-flashx",
   "glm-4-flash",
 ];
+const wenxinModels = [
+  "ernie-4.5-8k-preview",
+  "ernie-x1-32k-preview",
+];
 
 let seq = 1000; // 内置的模型序号生成器从1000开始
 export const DEFAULT_MODELS = [
@@ -543,6 +557,17 @@ export const DEFAULT_MODELS = [
       providerName: "ChatGLM",
       providerType: "chatglm",
       sorted: 12,
+    },
+  })),
+  ...wenxinModels.map((name) => ({
+    name,
+    available: true,
+    sorted: seq++,
+    provider: {
+      id: "wenxin",
+      providerName: "Wenxin",
+      providerType: "wenxin",
+      sorted: 13,
     },
   })),
 ] as const;

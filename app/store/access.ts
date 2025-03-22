@@ -15,6 +15,7 @@ import {
   IFLYTEK_BASE_URL,
   XAI_BASE_URL,
   CHATGLM_BASE_URL,
+  WENXIN_BASE_URL,
 } from "../constant";
 import { getHeaders } from "../client/api";
 import { getClientConfig } from "../config/client";
@@ -50,6 +51,8 @@ const DEFAULT_IFLYTEK_URL = isApp ? IFLYTEK_BASE_URL : ApiPath.Iflytek;
 const DEFAULT_XAI_URL = isApp ? XAI_BASE_URL : ApiPath.XAI;
 
 const DEFAULT_CHATGLM_URL = isApp ? CHATGLM_BASE_URL : ApiPath.ChatGLM;
+
+const DEFAULT_WENXIN_URL = isApp ? WENXIN_BASE_URL : ApiPath.Wenxin;
 
 const DEFAULT_ACCESS_STATE = {
   accessCode: "",
@@ -115,6 +118,10 @@ const DEFAULT_ACCESS_STATE = {
   // chatglm
   chatglmUrl: DEFAULT_CHATGLM_URL,
   chatglmApiKey: "",
+
+  // wenxin
+  wenxinUrl: DEFAULT_WENXIN_URL,
+  wenxinApiKey: "",
 
   // server config
   needCode: true,
@@ -192,6 +199,10 @@ export const useAccessStore = createPersistStore(
       return ensure(get(), ["chatglmApiKey"]);
     },
 
+    isValidWenxin() {
+      return ensure(get(), ["wenxinApiKey"]);
+    },
+
     isAuthorized() {
       this.fetch();
 
@@ -209,6 +220,7 @@ export const useAccessStore = createPersistStore(
         this.isValidIflytek() ||
         this.isValidXAI() ||
         this.isValidChatGLM() ||
+        this.isValidWenxin() ||
         !this.enabledAccessControl() ||
         (this.enabledAccessControl() && ensure(get(), ["accessCode"]))
       );

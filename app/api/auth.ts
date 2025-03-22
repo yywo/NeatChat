@@ -98,6 +98,9 @@ export function auth(req: NextRequest, modelProvider: ModelProvider) {
       case ModelProvider.ChatGLM:
         systemApiKey = serverConfig.chatglmApiKey;
         break;
+      case ModelProvider.Wenxin:
+        systemApiKey = serverConfig.wenxinApiKey;
+        break;
       case ModelProvider.GPT:
       default:
         if (req.nextUrl.pathname.includes("azure/deployments")) {

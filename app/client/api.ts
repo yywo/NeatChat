@@ -22,6 +22,7 @@ import { MoonshotApi } from "./platforms/moonshot";
 import { SparkApi } from "./platforms/iflytek";
 import { XAIApi } from "./platforms/xai";
 import { ChatGLMApi } from "./platforms/glm";
+import { WenxinApi } from "./platforms/wenxin";
 
 export const ROLES = ["system", "user", "assistant"] as const;
 export type MessageRole = (typeof ROLES)[number];
@@ -160,16 +161,19 @@ export class ClientApi {
       case ModelProvider.ChatGLM:
         this.llm = new ChatGLMApi();
         break;
+      case ModelProvider.Wenxin:
+        this.llm = new WenxinApi();
+        break;
       default:
         this.llm = new ChatGPTApi();
     }
   }
 
-  config() {}
+  config() { }
 
-  prompts() {}
+  prompts() { }
 
-  masks() {}
+  masks() { }
 
   async share(messages: ChatMessage[], avatarUrl: string | null = null) {
     const msgs = messages
@@ -249,28 +253,31 @@ export function getHeaders(ignoreHeaders: boolean = false) {
     const isIflytek = modelConfig.providerName === ServiceProvider.Iflytek;
     const isXAI = modelConfig.providerName === ServiceProvider.XAI;
     const isChatGLM = modelConfig.providerName === ServiceProvider.ChatGLM;
+    const isWenxin = modelConfig.providerName === ServiceProvider.Wenxin;
     const isEnabledAccessControl = accessStore.enabledAccessControl();
     const apiKey = isGoogle
       ? accessStore.googleApiKey
       : isAzure
-      ? accessStore.azureApiKey
-      : isAnthropic
-      ? accessStore.anthropicApiKey
-      : isByteDance
-      ? accessStore.bytedanceApiKey
-      : isAlibaba
-      ? accessStore.alibabaApiKey
-      : isMoonshot
-      ? accessStore.moonshotApiKey
-      : isXAI
-      ? accessStore.xaiApiKey
-      : isChatGLM
-      ? accessStore.chatglmApiKey
-      : isIflytek
-      ? accessStore.iflytekApiKey && accessStore.iflytekApiSecret
-        ? accessStore.iflytekApiKey + ":" + accessStore.iflytekApiSecret
-        : ""
-      : accessStore.openaiApiKey;
+        ? accessStore.azureApiKey
+        : isAnthropic
+          ? accessStore.anthropicApiKey
+          : isByteDance
+            ? accessStore.bytedanceApiKey
+            : isAlibaba
+              ? accessStore.alibabaApiKey
+              : isMoonshot
+                ? accessStore.moonshotApiKey
+                : isXAI
+                  ? accessStore.xaiApiKey
+                  : isChatGLM
+                    ? accessStore.chatglmApiKey
+                    : isWenxin
+                      ? accessStore.wenxinApiKey
+                      : isIflytek
+                        ? accessStore.iflytekApiKey && accessStore.iflytekApiSecret
+                          ? accessStore.iflytekApiKey + ":" + accessStore.iflytekApiSecret
+                          : ""
+                        : accessStore.openaiApiKey;
     return {
       isGoogle,
       isAzure,
@@ -282,6 +289,7 @@ export function getHeaders(ignoreHeaders: boolean = false) {
       isIflytek,
       isXAI,
       isChatGLM,
+      isWenxin,
       apiKey,
       isEnabledAccessControl,
     };
@@ -291,10 +299,10 @@ export function getHeaders(ignoreHeaders: boolean = false) {
     return isAzure
       ? "api-key"
       : isAnthropic
-      ? "x-api-key"
-      : isGoogle
-      ? "x-goog-api-key"
-      : "Authorization";
+        ? "x-api-key"
+        : isGoogle
+          ? "x-goog-api-key"
+          : "Authorization";
   }
 
   const {
@@ -302,6 +310,7 @@ export function getHeaders(ignoreHeaders: boolean = false) {
     isAzure,
     isAnthropic,
     isBaidu,
+    isWenxin,
     apiKey,
     isEnabledAccessControl,
   } = getConfig();
@@ -348,6 +357,8 @@ export function getClientApi(provider: ServiceProvider): ClientApi {
       return new ClientApi(ModelProvider.XAI);
     case ServiceProvider.ChatGLM:
       return new ClientApi(ModelProvider.ChatGLM);
+    case ServiceProvider.Wenxin:
+      return new ClientApi(ModelProvider.Wenxin);
     default:
       return new ClientApi(ModelProvider.GPT);
   }

@@ -485,6 +485,18 @@ const en: LocaleType = {
           SubTitle: "Example: ",
         },
       },
+      Wenxin: {
+        ApiKey: {
+          Title: "Wenxin API Key",
+          SubTitle: "Use a Wenxin API Key",
+          Placeholder: "Wenxin API Key",
+        },
+        Endpoint: {
+          Title: "Endpoint Address",
+          SubTitle: "Example: ",
+        },
+      },
+
       CustomModel: {
         Title: "Custom Models",
         SubTitle: "Custom model options, seperated by comma",
